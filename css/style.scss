@@ -1,0 +1,224 @@
+:root{
+    --main:#0077ff;
+    --black:#1b1b1b;
+    --off-white: rgba(255,255,255,.6)
+
+}
+
+*{
+    box-sizing: border-box;
+    margin: 0px;
+    //border: 1px solid red;
+}
+
+body{
+    background: var(--black) ;
+}
+
+
+header{
+    background:var(--black);
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    top: 0px;
+    transition: top .66s ease-out;
+    //border-bottom: 1px solid rgba($color: #fff, $alpha: 0.1);
+
+    nav{
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 50px;
+
+        .logo{
+            margin-left: 20px;
+        }
+
+        .logo img{
+            height: 25px;  
+            opacity: .6; 
+            transition: .5s; 
+           
+        }
+        .logo:hover img{
+            opacity: 1;
+        }
+
+        #burger_menu{
+            display: none;
+            margin-right: 20px;
+            height: 22px;
+        }
+
+
+        .links{
+            display: flex;
+            justify-content: space-between;
+            width: 450px;
+            margin-right: 20px;
+            img{
+                height: 18px;
+                opacity: .6;
+                transition: .5s;
+        
+            }
+
+            img:hover{
+                opacity: 1;
+            }
+
+
+
+            a{
+                color: white;
+                text-decoration: none;
+                font-family: sans-serif;
+                font-size: 14px;
+                font-weight:500 ;
+                
+            }
+
+            a:not(.cta-1){
+                padding-top: 5px;
+               opacity: .6;
+                transition: .5s;
+            }
+            a:not(.cta-1):hover{
+                opacity: 1;
+            }
+
+            .cta-1{
+                background-color: var(--main);
+                padding: 5px 20px;
+                font-weight: 600;
+                border-radius: 5px;
+            }
+
+        }
+          
+          /* -------------------------------   navbar media query  -------------------------*/  
+
+          @media only screen and (max-width: 768px) {
+            .links{
+                display: none;
+                
+            }
+            .logo img{
+                opacity: 1;
+            }
+
+            #burger_menu{
+                display: flex;
+            }
+          }
+
+    }
+
+}
+ /* -------------------------------   navbar for  mobile devices  -------------------------*/ 
+          
+ .mobile_navbar{
+    background: var(--black);
+    height: 0vh;
+    width: 100vw;
+    position: absolute;
+    top: 0px;
+    z-index: 999;
+    opacity: 1;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    transition: .66s;
+
+   #close_btn{
+       height: 35px;
+       background: black;
+       position: absolute;
+       top: 30px;
+       right: 30px;
+   }
+
+   .verticle_links{
+       height: 80vh;
+       width: 80vw;
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: space-between;
+       padding: 20px 0px 80px;
+       a{
+           text-decoration: none;
+           color: white;
+           font-family: sans-serif;
+           font-size: 25px;
+           font-weight: 600;
+           padding: 0px 0px  30px ;
+           
+       }
+
+       
+       .cta-1{
+           margin-top: 50px;
+           padding: 10px 20px;
+           border-radius: 5px;
+           background: var(--main);
+          
+       }
+
+       .line{
+           height: 1px;
+           width: 100%;
+           background-color: rgba($color: #fff, $alpha: .5-);
+           border-radius: 50px;
+       }
+
+
+
+   }
+
+
+
+
+}
+
+
+
+
+.page1{
+    height: 100vh;
+    width: 100%;
+    background:white;
+
+
+    .container-1{
+
+        max-width: 1100px;
+        height: 100%;
+        background-color: rgba($color: red, $alpha: 0.1);
+
+        margin: auto;
+    }
+
+}
+
+
+.page2{
+    height:100vh;
+    width: 100%;
+    background: white;
+
+    .container-2{
+
+        max-width: 1100px;
+        height: 100%;
+        background-color: rgba($color: blue, $alpha: 0.1);
+        margin: auto;
+    }
+
+
+    
+
+}
