@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+set -e
+
+npx lint-staged
+npm run lint
+# next build also runs the TypeScript check.
+npm run build
+
+# A stuck Docker Desktop never answers, so give it ten seconds.
+docker_ready() {
+  docker info >/dev/null 2>&1 &
+  check=$!
+  (sleep 10; kill -9 "$check") >/dev/null 2>&1 &
+  watcher=$!
+  wait "$check"
+  status=$?
+  kill "$watcher" 2>/dev/null || true
+  return "$status"
+}
+
+# Jenkins deploys this image, so a broken Dockerfile should fail here first.
+if docker_ready; then
+  docker build -t viximate-precommit:local .
+else
+  echo "pre-commit: Docker daemon unavailable, skipping image build (Jenkins will still build)."
+fi
