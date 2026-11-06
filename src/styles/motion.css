@@ -1,5 +1,6 @@
+/* Hallmark · see src/app/globals.css for the stamp, critique and waivers of this redesign */
 /* biome-ignore-all lint/complexity/noImportantStyles: reduced-motion and cursor overrides must beat component styles */
-/* Motion primitives. Colors come from --cs- tokens only. */
+/* Motion primitives. Colours come from --cs- tokens only. */
 
 /* Lenis smooth scroll */
 html.lenis,
@@ -19,17 +20,16 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* Split text — words/lines masked for reveal */
+/* Split text: words masked by their line for the rise */
 .split-line {
   display: block;
   overflow: clip;
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
 }
 
 .split-word {
   display: inline-block;
-  will-change: transform;
 }
 
 .sr-only {
@@ -44,59 +44,96 @@ html.lenis body {
   border: 0;
 }
 
-/* Scroll-scrubbed reading text */
-.scrub-word {
-  color: color-mix(in srgb, var(--cs-foreground) 18%, transparent);
-  transition: color 0.2s linear;
+/* Scroll-scrubbed reading text: the script dims and brightens by opacity */
+.scrub-word[data-tone="web"] {
+  color: var(--cs-disc-web);
 }
 
-/* Marquee */
-.marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee var(--marquee-duration, 40s) linear infinite;
+.scrub-word[data-tone="app"] {
+  color: var(--cs-disc-app);
 }
 
-.marquee[data-direction="reverse"] {
-  animation-direction: reverse;
+.scrub-word[data-tone="ai"] {
+  color: var(--cs-disc-ai);
 }
 
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
+.scrub-word[data-tone="growth"] {
+  color: var(--cs-disc-growth);
 }
 
-/* Loader */
+/* ==========================================================================
+   Loader: the mark fills with water, the curtain lifts
+   ========================================================================== */
+
 .vx-loader {
   position: fixed;
   inset: 0;
-  z-index: 150;
-  display: flex;
-  pointer-events: all;
-}
-
-.vx-loader-col {
-  flex: 1;
-  height: 100%;
+  z-index: var(--cs-z-loader);
+  display: grid;
+  place-items: center;
   background: var(--cs-background);
-  border-right: 1px solid var(--cs-line);
 }
 
-.vx-loader-col:last-child {
-  border-right: 0;
+.vx-loader-mark {
+  width: clamp(6rem, 14vw, 10rem);
+  height: auto;
+}
+
+.vx-loader-empty {
+  fill: var(--cs-surface-2);
+}
+
+.vx-loader-wave {
+  fill: var(--cs-foreground);
+  animation: vx-wave 1.5s linear infinite;
+}
+
+/* A second swell behind the first, half a wave out of step. */
+.vx-loader-wave--back {
+  fill: var(--cs-muted);
+  animation-duration: 2.3s;
+  animation-direction: reverse;
+  translate: 0 -0.75rem;
+}
+
+/* One wavelength, so the loop has no seam. */
+@keyframes vx-wave {
+  to {
+    transform: translateX(407.5px);
+  }
+}
+
+/* A rolling digit: a column of 0 to 9 behind a one-digit window. */
+.odo {
+  display: inline-block;
+  height: 1em;
+  overflow: clip;
+}
+
+.odo-col {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.45s var(--cs-ease);
+}
+
+.odo-col > span {
+  display: block;
+  height: 1em;
 }
 
 html.is-loaded .vx-loader {
   pointer-events: none;
 }
 
-/* Custom cursor (fine pointers only) */
+/* ==========================================================================
+   Cursor (fine pointers only). Sizes change by scale, never by width.
+   ========================================================================== */
+
 .vx-cursor {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 180;
+  z-index: var(--cs-z-cursor);
   pointer-events: none;
   mix-blend-mode: difference;
 }
@@ -114,41 +151,36 @@ html.is-loaded .vx-loader {
   width: 6px;
   height: 6px;
   background: var(--cs-foreground);
+  transition: opacity var(--cs-dur-short) var(--cs-ease);
 }
 
 .vx-cursor-ring {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: 1px solid var(--cs-foreground);
   transition:
-    width 0.45s var(--cs-ease),
-    height 0.45s var(--cs-ease),
-    background 0.45s var(--cs-ease),
-    border-color 0.45s var(--cs-ease),
-    opacity 0.3s;
+    scale var(--cs-dur-long) var(--cs-ease),
+    background-color var(--cs-dur-long) var(--cs-ease),
+    opacity var(--cs-dur-short) var(--cs-ease);
 }
 
 .vx-cursor-label {
-  font-family: var(--cs-font-accent);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.3rem;
+  font-weight: 500;
   color: var(--cs-background);
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity var(--cs-dur-short) var(--cs-ease);
 }
 
 .vx-cursor[data-state="hover"] .vx-cursor-ring {
-  width: 64px;
-  height: 64px;
+  scale: 1.6;
   background: var(--cs-foreground);
 }
 
 .vx-cursor[data-state="label"] .vx-cursor-ring {
-  width: 92px;
-  height: 92px;
+  scale: 2.4;
   background: var(--cs-foreground);
 }
 
@@ -166,6 +198,36 @@ html.is-loaded .vx-loader {
   opacity: 0;
 }
 
+/* On the vermilion menu and the amber sheet a difference blend would turn
+   the cursor blue, so there it drops the blend and takes the ink. */
+html:has(.vx-nav[data-open="true"], .vx-tr[style*="visible"]) .vx-cursor {
+  mix-blend-mode: normal;
+}
+
+html:has(.vx-nav[data-open="true"], .vx-tr[style*="visible"]) .vx-cursor-dot {
+  background: var(--cs-on-accent);
+}
+
+html:has(.vx-nav[data-open="true"], .vx-tr[style*="visible"]) .vx-cursor-ring {
+  border-color: var(--cs-on-accent);
+}
+
+html:has(.vx-nav[data-open="true"], .vx-tr[style*="visible"])
+  .vx-cursor[data-state="hover"]
+  .vx-cursor-ring {
+  background: transparent;
+}
+
+html:has(.vx-nav[data-open="true"], .vx-tr[style*="visible"])
+  .vx-cursor[data-state="label"]
+  .vx-cursor-ring {
+  background: var(--cs-on-accent);
+}
+
+html:has(.vx-nav[data-open="true"], .vx-tr[style*="visible"]) .vx-cursor-label {
+  color: var(--cs-accent);
+}
+
 @media (hover: hover) and (pointer: fine) {
   html.has-cursor,
   html.has-cursor * {
@@ -178,32 +240,7 @@ html.is-loaded .vx-loader {
   }
 }
 
-/* Pulses */
-.pulse-dot {
-  position: relative;
-}
-
-.pulse-dot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: inherit;
-  animation: pulse-ring 2s var(--cs-ease) infinite;
-}
-
-@keyframes pulse-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(3);
-    opacity: 0;
-  }
-}
-
-/* Reduced motion — keep content, drop movement */
+/* Reduced motion: keep the content, drop the movement */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -214,11 +251,11 @@ html.is-loaded .vx-loader {
     scroll-behavior: auto !important;
   }
 
-  .marquee {
+  .vx-loader-wave {
     animation: none;
   }
 
-  .scrub-word {
-    color: inherit;
+  .odo-col {
+    transition: none;
   }
 }

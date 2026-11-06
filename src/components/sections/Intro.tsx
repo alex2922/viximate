@@ -1,119 +1,107 @@
+import Ribbon from "@/components/intro/Ribbon";
 import { capabilities } from "@/config/site";
 
-type Token = { text: string; tone?: "accent" | "accent-2" };
+type Token = { text: string; tone?: "web" | "app" | "ai" | "growth" };
 
 const STATEMENT: Token[] = [
   {
     text: "Viximate is a technology studio for ambitious businesses. We design and engineer",
   },
-  { text: "web platforms,", tone: "accent" },
-  { text: "mobile apps,", tone: "accent-2" },
-  { text: "intelligent automation", tone: "accent" },
+  { text: "web platforms,", tone: "web" },
+  { text: "mobile apps,", tone: "app" },
+  { text: "intelligent automation", tone: "ai" },
   { text: "and" },
-  { text: "growth engines", tone: "accent-2" },
+  { text: "growth engines,", tone: "growth" },
   {
-    text: "— then wire them together, so every part of your digital presence makes the others stronger.",
+    text: "then wire them together so every part of your digital presence makes the others stronger.",
   },
 ];
 
+const TITLE = ["Every part,", "pulling the same way."];
+
+const BELT_TONES = ["web", "app", "ai", "growth"] as const;
+
 const PILLARS = [
   {
-    index: "A",
     title: "Technology first",
     text: "Engineering is our foundation. We choose stacks for performance and longevity, not trends.",
   },
   {
-    index: "B",
     title: "Creative by nature",
     text: "Considered design and storytelling that give your product a voice worth remembering.",
   },
   {
-    index: "C",
     title: "Growth as the outcome",
     text: "Everything we ship is measured against one question: does it move your business forward?",
   },
 ];
 
-export default function Intro({ index }: { index: string }) {
+export default function Intro() {
   return (
-    <section
-      id="about"
-      aria-labelledby="intro-title"
-      className="section overflow-hidden pb-0 md:pb-0"
-    >
+    <section id="about" aria-labelledby="intro-title" className="intro">
       <div className="shell">
-        <div className="grid gap-8 md:grid-cols-12 md:gap-6">
-          <div className="md:col-span-3">
-            <p className="eyebrow" data-reveal="up">
-              <span>({index}) About</span>
-            </p>
-          </div>
-          <div className="md:col-span-9">
-            <h2 id="intro-title" className="sr-only">
-              About Viximate
-            </h2>
-            <p
-              className="h3 font-medium tracking-[-0.03em] leading-[1.08]"
-              data-reveal="scrub"
-            >
-              {STATEMENT.flatMap((token, ti) =>
-                token.text.split(" ").map((word, wi) => (
-                  <span
-                    // biome-ignore lint/suspicious/noArrayIndexKey: static copy, order never changes
-                    key={`${ti}-${wi}`}
-                    className="scrub-word"
-                    data-tone={token.tone}
-                  >
-                    {word}{" "}
-                  </span>
-                )),
-              )}
-            </p>
-          </div>
+        <div className="intro-stage">
+          <Ribbon />
+          <h2 id="intro-title" className="h2 intro-title" data-reveal="split">
+            <span className="sr-only">{TITLE.join(" ")}</span>
+            <span aria-hidden="true">
+              {TITLE.map((line) => (
+                <span key={line} className="split-line intro-title-line">
+                  <span className="split-word">{line}</span>
+                </span>
+              ))}
+            </span>
+          </h2>
+          <div className="intro-ribbon" />
+          <p className="statement intro-statement" data-reveal="scrub">
+            {STATEMENT.flatMap((token, ti) =>
+              token.text.split(" ").map((word, wi) => (
+                <span
+                  // biome-ignore lint/suspicious/noArrayIndexKey: static copy, order never changes
+                  key={`${ti}-${wi}`}
+                  className="scrub-word"
+                  data-tone={token.tone}
+                >
+                  {word}{" "}
+                </span>
+              )),
+            )}
+          </p>
         </div>
 
-        <div className="mt-20 grid border-t hairline md:mt-32 md:grid-cols-3">
+        <ul className="intro-pillars">
           {PILLARS.map((pillar, i) => (
-            <div
+            <li
               key={pillar.title}
-              className={`flex flex-col gap-4 border-b hairline py-8 md:border-b-0 md:py-10 ${i > 0 ? "md:border-l md:pl-8" : "md:pr-8"}`}
+              className="intro-pillar"
               data-reveal="up"
-              data-reveal-delay={i * 0.1}
+              data-reveal-delay={i * 0.08}
             >
-              <span className="caption text-cs-accent">{pillar.index}</span>
-              <h3 className="lead font-semibold">{pillar.title}</h3>
-              <p className="body text-muted max-w-[34ch]">{pillar.text}</p>
-            </div>
+              <h3 className="h3">{pillar.title}</h3>
+              <p className="body text-muted">{pillar.text}</p>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
 
-      <div className="intro-belt mt-24 md:mt-36" aria-hidden="true">
-        <div className="intro-belt-track on-accent">
-          <div
-            className="marquee"
-            style={{ ["--marquee-duration" as string]: "48s" }}
-          >
-            {[0, 1].map((copy) => (
-              <div key={copy} className="flex shrink-0 items-center">
-                {capabilities.map((cap) => (
-                  <span
-                    key={`${copy}-${cap}`}
-                    className="flex items-center gap-8 px-8 py-5"
-                  >
-                    <span className="h3">{cap}</span>
-                    <svg
-                      viewBox="0 0 20 20"
-                      className="h-4 w-4"
-                      aria-hidden="true"
-                    >
-                      <circle cx="10" cy="10" r="5" fill="currentColor" />
-                    </svg>
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
+      <div className="intro-belt" aria-hidden="true">
+        <div className="intro-belt-track" data-reveal="belt">
+          {[0, 1].map((copy) => (
+            <div key={copy} className="intro-belt-set">
+              {capabilities.map((cap, i) => (
+                <span
+                  key={`${copy}-${cap}`}
+                  className="intro-belt-item"
+                  data-tone={BELT_TONES[i % BELT_TONES.length]}
+                >
+                  {cap}
+                  <svg viewBox="0 0 10 10" aria-hidden="true">
+                    <path d="M5 0 L6.2 3.8 L10 5 L6.2 6.2 L5 10 L3.8 6.2 L0 5 L3.8 3.8 Z" />
+                  </svg>
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>

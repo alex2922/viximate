@@ -1,20 +1,12 @@
 "use client";
 
+import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef } from "react";
-import AIVisual from "@/components/visuals/AIVisual";
-import AppVisual from "@/components/visuals/AppVisual";
-import GrowthVisual from "@/components/visuals/GrowthVisual";
-import WebVisual from "@/components/visuals/WebVisual";
-import { type ServiceId, services } from "@/config/site";
+import Roll from "@/components/ui/Roll";
+import { VISUALS } from "@/components/visuals";
+import { serviceHref, services } from "@/config/site";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { registerScrollTarget } from "@/lib/scroll";
-
-const VISUALS: Record<ServiceId, () => React.JSX.Element> = {
-  web: WebVisual,
-  app: AppVisual,
-  ai: AIVisual,
-  growth: GrowthVisual,
-};
 
 const HORIZONTAL_QUERY =
   "(min-width: 1024px) and (min-height: 640px) and (prefers-reduced-motion: no-preference)";
@@ -22,13 +14,13 @@ const HORIZONTAL_QUERY =
 /**
  * Individual service showcases. On large screens the four panels travel
  * horizontally inside a pinned stage; on smaller screens (or with reduced
- * motion) they stack vertically as regular sections.
+ * motion) they stack vertically as regular sections. Either way the stage
+ * opens out of an inset card as it scrolls in.
  */
 export default function Showcase() {
   const rootRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
-  const countRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(
     () => {
@@ -36,6 +28,29 @@ export default function Showcase() {
       const track = trackRef.current;
       if (!root || !track) return;
       const mm = gsap.matchMedia();
+
+      // The stage opens from an inset card to the full screen as it arrives.
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const inset = () => Math.round(Math.min(56, window.innerWidth * 0.04));
+        gsap.fromTo(
+          root,
+          {
+            clipPath: () =>
+              `inset(${inset()}px ${inset()}px 0px ${inset()}px round 28px)`,
+          },
+          {
+            clipPath: "inset(0px 0px 0px 0px round 0px)",
+            ease: "none",
+            scrollTrigger: {
+              trigger: root,
+              start: "top bottom",
+              end: "top top",
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+          },
+        );
+      });
 
       mm.add(HORIZONTAL_QUERY, () => {
         const panels = gsap.utils.toArray<HTMLElement>(".svc-panel", track);
@@ -59,8 +74,6 @@ export default function Showcase() {
                 panels.length - 1,
                 Math.round(self.progress * (panels.length - 1)),
               );
-              if (countRef.current)
-                countRef.current.textContent = services[index].index;
               root.dataset.active = services[index].id;
             },
           },
@@ -73,9 +86,9 @@ export default function Showcase() {
           if (visual) {
             gsap.fromTo(
               visual,
-              { xPercent: 14 },
+              { xPercent: 6 },
               {
-                xPercent: -14,
+                xPercent: -6,
                 ease: "none",
                 scrollTrigger: {
                   trigger: panel,
@@ -202,30 +215,43 @@ export default function Showcase() {
               id={`service-${service.id}`}
               className="svc-panel"
               data-tone={service.tone}
+              data-discipline={service.id}
               data-index={service.index}
               data-active="false"
               aria-labelledby={`service-${service.id}-title`}
             >
               <div className="shell svc-panel-inner">
-                <div className="svc-panel-copy">
-                  <div className="flex items-center gap-4">
-                    <span className="caption svc-tone">{service.index}</span>
-                    <span className="svc-tone-line" aria-hidden="true" />
-                    <span className="caption text-muted">Service</span>
-                  </div>
-                  <h3 id={`service-${service.id}-title`} className="h2">
+                <header className="svc-panel-head">
+                  <span className="figure svc-panel-index">
+                    {service.index}
+                  </span>
+                  <h3
+                    id={`service-${service.id}-title`}
+                    className="h2 svc-panel-title"
+                  >
                     {service.title}
                   </h3>
-                  <p className="lead max-w-[30ch]">{service.what}</p>
-                  <div className="grid gap-8 border-t hairline pt-6 sm:grid-cols-2">
+                  <a href={serviceHref(service)} className="btn svc-panel-more">
+                    <Roll>{`See ${service.title}`}</Roll>
+                    <span className="btn-icon">
+                      <ArrowUpRight
+                        size={18}
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      />
+                    </span>
+                  </a>
+                </header>
+                <div className="svc-panel-copy">
+                  <p className="lead text-muted svc-panel-what">
+                    {service.what}
+                  </p>
+                  <div className="svc-panel-facts">
                     <div>
-                      <p className="caption text-muted mb-4">What we deliver</p>
+                      <h4 className="svc-panel-label">What we deliver</h4>
                       <ul className="flex flex-col gap-2">
                         {service.deliver.map((item) => (
-                          <li
-                            key={item}
-                            className="body flex items-baseline gap-3"
-                          >
+                          <li key={item} className="body svc-panel-item">
                             <span className="svc-bullet" aria-hidden="true" />
                             {item}
                           </li>
@@ -233,13 +259,16 @@ export default function Showcase() {
                       </ul>
                     </div>
                     <div>
-                      <p className="caption text-muted mb-4">How it helps</p>
-                      <p className="body">{service.helps}</p>
+                      <h4 className="svc-panel-label">How it helps</h4>
+                      <p className="body text-muted">{service.helps}</p>
                     </div>
                   </div>
                 </div>
                 <div className="svc-panel-visual">
                   <Visual />
+                  <p className="caption text-muted svc-panel-note">
+                    Illustrative interface, sample data
+                  </p>
                 </div>
               </div>
             </article>
@@ -247,28 +276,26 @@ export default function Showcase() {
         })}
       </div>
 
-      <div className="svc-hud" aria-hidden="true">
-        <div className="shell flex items-center gap-6">
-          <span className="caption">
-            <span ref={countRef}>01</span> /{" "}
-            {String(services.length).padStart(2, "0")}
-          </span>
-          <span className="svc-hud-track">
+      <nav className="svc-hud" aria-label="Services">
+        <div className="shell svc-hud-inner">
+          <span className="svc-hud-track" aria-hidden="true">
             <span ref={barRef} className="svc-hud-bar" />
           </span>
-          <ul className="flex gap-6">
+          <ul className="svc-hud-list">
             {services.map((service) => (
-              <li
-                key={service.id}
-                className="caption svc-hud-label"
-                data-id={service.id}
-              >
-                {service.short}
+              <li key={service.id}>
+                <a
+                  href={`#service-${service.id}`}
+                  className="caption svc-hud-label"
+                  data-id={service.id}
+                >
+                  {service.title}
+                </a>
               </li>
             ))}
           </ul>
         </div>
-      </div>
+      </nav>
     </section>
   );
 }

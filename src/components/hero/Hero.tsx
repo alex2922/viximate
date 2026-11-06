@@ -1,131 +1,83 @@
 "use client";
 
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Magnetic from "@/components/motion/Magnetic";
-import { services } from "@/config/site";
-import { gsap, useGSAP } from "@/lib/gsap";
-import { scrollToId } from "@/lib/scroll";
+import Roll from "@/components/ui/Roll";
+import { site } from "@/config/site";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { loadedSignal, useSignal } from "@/lib/signal";
-import type { EcosystemScene } from "./ecosystemScene";
 import HeroScene from "./HeroScene";
+import type { PileScene } from "./pileScene";
 
-const LINES = [
-  { text: "We engineer", indent: false },
-  { text: "digital", indent: true, pill: true },
-  { text: "ecosystems.", indent: false, accent: true },
-];
-
-function NodePill() {
-  return (
-    <span className="hero-pill" aria-hidden="true">
-      <svg aria-hidden="true" viewBox="0 0 120 48" className="h-full w-auto">
-        <path d="M14 24 H54 M66 24 H106" className="hero-pill-line" />
-        <circle cx="14" cy="24" r="7" className="hero-pill-node" />
-        <circle cx="60" cy="24" r="11" className="hero-pill-core" />
-        <circle
-          cx="106"
-          cy="24"
-          r="7"
-          className="hero-pill-node hero-pill-node--alt"
-        />
-        <circle r="4" className="hero-pill-packet">
-          <animateMotion
-            dur="2.4s"
-            repeatCount="indefinite"
-            path="M14 24 H106"
-          />
-        </circle>
-      </svg>
-    </span>
-  );
-}
+const LINES = ["You imagine.", "We create."];
 
 export default function Hero() {
   const rootRef = useRef<HTMLElement>(null);
-  const sceneRef = useRef<EcosystemScene | null>(null);
-  const [active, setActive] = useState<number | null>(null);
+  const sceneRef = useRef<PileScene | null>(null);
   const loaded = useSignal(loadedSignal);
 
-  const selectService = (index: number) => {
-    scrollToId(`service-${services[index].id}`);
+  const attachScene = (scene: PileScene | null) => {
+    sceneRef.current = scene;
+    if (scene && loadedSignal.get()) scene.drop();
   };
 
-  const onSceneHover = (index: number | null) => {
-    setActive(index);
-    window.dispatchEvent(
-      new CustomEvent("vx:cursor", {
-        detail: { label: index === null ? null : "Explore" },
-      }),
-    );
-  };
-
-  const highlight = (index: number | null) => {
-    setActive(index);
-    sceneRef.current?.highlight(index);
-  };
-
-  // Hide intro elements while the loader is up.
+  // Hold the intro state while the loader is up (scripted only, so the
+  // page reads in full with scripting off).
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         if (loadedSignal.get()) return;
-        gsap.set(".hero-word", { yPercent: 115, rotate: 6 });
-        gsap.set(".hero-fade", { autoAlpha: 0, y: 24 });
-        gsap.set(".hero-canvas", { autoAlpha: 0, scale: 1.12 });
+        gsap.set(".hero-word", { yPercent: 110 });
+        gsap.set(".hero-fade", { autoAlpha: 0, y: 12 });
       });
     },
     { scope: rootRef },
   );
 
-  // Intro once the loader releases the page.
+  // Once the loader lifts: the blocks fall, the head rises.
   useGSAP(
     () => {
       if (!loaded) return;
+      sceneRef.current?.drop();
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-        tl.to(".hero-canvas", { autoAlpha: 1, scale: 1, duration: 2.2 }, 0)
-          .to(
-            ".hero-word",
-            { yPercent: 0, rotate: 0, duration: 1.4, stagger: 0.09 },
-            0.15,
-          )
+        gsap
+          .timeline({ defaults: { ease: "expo.out" } })
+          .to(".hero-word", { yPercent: 0, duration: 1.1, stagger: 0.08 }, 0.35)
           .to(
             ".hero-fade",
-            { autoAlpha: 1, y: 0, duration: 1.2, stagger: 0.08 },
-            0.6,
+            { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.06 },
+            0.7,
           );
       });
     },
     { scope: rootRef, dependencies: [loaded] },
   );
 
-  // Scroll-out choreography: dive into the network, lift the copy away.
+  // The hero holds while you scroll. The blocks become the mark, the colour
+  // drains from the room, and "We create." fills in as the last block lands.
   useGSAP(
     () => {
       const root = rootRef.current;
       if (!root) return;
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap
-          .timeline({
-            scrollTrigger: {
-              trigger: root,
-              start: "top top",
-              end: "bottom top",
-              scrub: true,
-              onUpdate: (self) => sceneRef.current?.setScroll(self.progress),
-            },
-          })
-          .to(
-            ".hero-content",
-            { yPercent: -18, autoAlpha: 0, ease: "power1.in" },
-            0,
-          )
-          .to(".hero-canvas-inner", { autoAlpha: 0.15, ease: "power2.in" }, 0);
+        ScrollTrigger.create({
+          trigger: root,
+          start: "top top",
+          end: "+=130%",
+          pin: true,
+          scrub: 0.6,
+          anticipatePin: 1,
+          onUpdate: (self) => {
+            sceneRef.current?.setAssembly(self.progress);
+            root.style.setProperty("--hero-p", self.progress.toFixed(3));
+          },
+        });
       });
+      return () => mm.revert();
     },
     { scope: rootRef },
   );
@@ -135,114 +87,44 @@ export default function Hero() {
       ref={rootRef}
       id="top"
       aria-labelledby="hero-title"
-      className="relative h-[100svh] min-h-[620px] w-full overflow-hidden"
+      className="hero"
     >
-      <div className="hero-canvas absolute inset-0">
-        <div className="hero-canvas-inner absolute inset-0">
-          <HeroScene
-            onScene={(scene) => {
-              sceneRef.current = scene;
-            }}
-            onHover={onSceneHover}
-            onSelect={selectService}
-          />
-        </div>
+      <div className="hero-canvas">
+        <HeroScene onScene={attachScene} />
       </div>
-      <div className="hero-veil pointer-events-none absolute inset-0" />
 
-      <div className="hero-content pointer-events-none relative z-10 shell flex h-full flex-col justify-between pt-[calc(var(--cs-nav-h)+1.25rem)] pb-5 md:pb-8">
-        <div className="flex items-start justify-between gap-6">
-          <p className="eyebrow hero-fade">Technology-driven digital agency</p>
-
-          <ul
-            className="hero-fade pointer-events-auto hidden flex-col items-end gap-1 lg:flex"
-            aria-label="Services"
-          >
-            {services.map((service, i) => (
-              <li key={service.id}>
-                <button
-                  type="button"
-                  className="hero-legend"
-                  data-active={active === i}
-                  data-tone={service.tone}
-                  onPointerEnter={() => highlight(i)}
-                  onPointerLeave={() => highlight(null)}
-                  onFocus={() => highlight(i)}
-                  onBlur={() => highlight(null)}
-                  onClick={() => selectService(i)}
-                >
-                  <span className="caption text-muted">{service.index}</span>
-                  <span>{service.title}</span>
-                </button>
-              </li>
+      <div className="hero-head shell">
+        <h1 id="hero-title" className="h1 hero-title">
+          <span className="sr-only">{LINES.join(" ")}</span>
+          <span aria-hidden="true">
+            {LINES.map((line) => (
+              <span key={line} className="split-line">
+                <span className="hero-word split-word">{line}</span>
+              </span>
             ))}
-          </ul>
-        </div>
-
-        <div>
-          <h1 id="hero-title" className="h1">
-            <span className="sr-only">We engineer digital ecosystems.</span>
-            <span aria-hidden="true">
-              {LINES.map((line) => (
-                <span
-                  key={line.text}
-                  className={`split-line ${line.indent ? "pl-[4vw] md:pl-[7vw]" : ""}`}
-                >
-                  <span
-                    className={`hero-word split-word ${line.accent ? "text-cs-accent" : ""}`}
-                  >
-                    {line.text}
-                    {line.pill ? <NodePill /> : null}
-                  </span>
+          </span>
+        </h1>
+        <div className="hero-side">
+          <p className="lead text-muted hero-fade hero-lede">
+            Websites, apps, AI automation and growth, built to work as one.
+          </p>
+          <div className="hero-fade hero-actions">
+            <Magnetic>
+              <a href={site.cta.href} className="btn btn-primary">
+                <Roll>{site.cta.label}</Roll>
+                <span className="btn-icon">
+                  <ArrowUpRight size={18} strokeWidth={2} aria-hidden="true" />
                 </span>
-              ))}
-            </span>
-          </h1>
-
-          <div className="mt-6 grid items-end gap-6 md:mt-10 md:grid-cols-12">
-            <p className="lead hero-fade text-muted md:col-span-6 lg:col-span-5">
-              A technology-led studio building{" "}
-              <span className="text-cs-foreground">websites</span>,{" "}
-              <span className="text-cs-foreground">apps</span>,{" "}
-              <span className="text-cs-foreground">AI automation</span> and{" "}
-              <span className="text-cs-foreground">growth systems</span> that
-              work as one.
-            </p>
-            <div className="hero-fade pointer-events-auto flex flex-wrap gap-3 md:col-span-6 md:justify-end lg:col-span-7">
-              <Magnetic>
-                <a href="#contact" className="btn btn-primary">
-                  Start a Project
-                  <span className="btn-icon">
-                    <ArrowUpRight
-                      size={18}
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
-                  </span>
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href="#services" className="btn btn-ghost">
-                  Explore What We Do
-                  <span className="btn-icon">
-                    <ArrowDown size={18} strokeWidth={2} aria-hidden="true" />
-                  </span>
-                </a>
-              </Magnetic>
-            </div>
-          </div>
-
-          <div className="hero-fade mt-8 flex items-center justify-between border-t hairline pt-4 md:mt-12">
-            <span className="caption text-muted flex items-center gap-3">
-              <span className="hero-scroll-cue" aria-hidden="true" />
-              Scroll to explore
-            </span>
-            <span className="caption text-muted hidden md:inline">
-              {active === null
-                ? "Hover the network · click a panel"
-                : `${services[active].index} — ${services[active].title}`}
-            </span>
-            <span className="caption text-muted md:hidden">Tap a panel</span>
+              </a>
+            </Magnetic>
+            <Magnetic>
+              <a href="#services" className="btn">
+                <Roll>Explore what we do</Roll>
+                <span className="btn-icon btn-icon--down">
+                  <ArrowDown size={18} strokeWidth={2} aria-hidden="true" />
+                </span>
+              </a>
+            </Magnetic>
           </div>
         </div>
       </div>

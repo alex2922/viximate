@@ -8,6 +8,8 @@ import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
  *   data-reveal="split"   masked word/line rise (expects .split-word children)
  *   data-reveal="line"    hairline draws in
  *   data-reveal="scrub"   words brighten as you read (expects .scrub-word children)
+ *   data-reveal="belt"    a row that travels sideways with the scroll
+ *   data-assemble         its flat blocks snap together as it arrives
  * Optional data-reveal-delay="0.2".
  */
 export default function Reveals() {
@@ -17,6 +19,37 @@ export default function Reveals() {
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       const items = gsap.utils.toArray<HTMLElement>("[data-reveal]");
 
+      // Cascading heads: each line brightens in turn as the head passes.
+      for (const el of gsap.utils.toArray<HTMLElement>("[data-fill]")) {
+        gsap.fromTo(
+          el.querySelectorAll(".split-line"),
+          { opacity: 0.22 },
+          {
+            opacity: 1,
+            ease: "none",
+            stagger: 0.5,
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              end: "bottom 50%",
+              scrub: true,
+            },
+          },
+        );
+      }
+
+      for (const el of gsap.utils.toArray<HTMLElement>("[data-assemble]")) {
+        el.dataset.on = "false";
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top 78%",
+          once: true,
+          onEnter: () => {
+            el.dataset.on = "true";
+          },
+        });
+      }
+
       for (const el of items) {
         const type = el.dataset.reveal;
         const delay = Number(el.dataset.revealDelay ?? 0);
@@ -24,9 +57,9 @@ export default function Reveals() {
 
         if (type === "up") {
           gsap.from(el, {
-            y: 48,
+            y: 24,
             autoAlpha: 0,
-            duration: 1.2,
+            duration: 0.8,
             ease: "expo.out",
             delay,
             scrollTrigger,
@@ -34,10 +67,9 @@ export default function Reveals() {
         } else if (type === "split") {
           gsap.from(el.querySelectorAll(".split-word"), {
             yPercent: 110,
-            rotate: 4,
-            duration: 1.25,
+            duration: 0.9,
             ease: "expo.out",
-            stagger: 0.045,
+            stagger: 0.04,
             delay,
             scrollTrigger,
           });
@@ -51,29 +83,48 @@ export default function Reveals() {
             scrollTrigger,
           });
         } else if (type === "scrub") {
-          const words = el.querySelectorAll<HTMLElement>(".scrub-word");
-          const css = getComputedStyle(document.documentElement);
-          const resolve = (tone?: string) =>
-            css
-              .getPropertyValue(tone ? `--cs-${tone}` : "--cs-foreground")
-              .trim();
-          gsap.to(words, {
-            color: (_i: number, word: HTMLElement) =>
-              resolve(word.dataset.tone),
-            stagger: 0.1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 80%",
-              end: "bottom 45%",
-              scrub: true,
+          // Words brighten as the reader passes them (opacity only).
+          gsap.fromTo(
+            el.querySelectorAll<HTMLElement>(".scrub-word"),
+            { opacity: 0.18 },
+            {
+              opacity: 1,
+              stagger: 0.1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: el,
+                start: "top 80%",
+                end: "bottom 45%",
+                scrub: true,
+              },
             },
-          });
+          );
+        } else if (type === "belt") {
+          // The capability belt travels with the scroll, never on its own.
+          gsap.fromTo(
+            el,
+            { xPercent: 0 },
+            {
+              xPercent: -30,
+              ease: "none",
+              scrollTrigger: {
+                trigger: el,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.6,
+              },
+            },
+          );
         }
       }
     });
 
-    return () => mm.revert();
+    return () => {
+      mm.revert();
+      for (const el of gsap.utils.toArray<HTMLElement>("[data-assemble]")) {
+        delete el.dataset.on;
+      }
+    };
   });
 
   // Re-measure after late layout shifts (images, fonts, pinned sections).

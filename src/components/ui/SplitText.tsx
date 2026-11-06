@@ -9,6 +9,8 @@ type SplitTextProps = {
   /** Optional per-word decorator, e.g. to colour a keyword. */
   decorate?: (word: string, lineIndex: number, wordIndex: number) => ReactNode;
   reveal?: boolean;
+  /** Lines brighten from muted to full, one after another, as you scroll. */
+  fill?: boolean;
 };
 
 /**
@@ -22,6 +24,7 @@ export default function SplitText({
   id,
   decorate,
   reveal = true,
+  fill = false,
 }: SplitTextProps) {
   const full = lines.join(" ");
   return (
@@ -29,8 +32,12 @@ export default function SplitText({
       id={id}
       className={className}
       data-reveal={reveal ? "split" : undefined}
+      data-fill={fill ? "" : undefined}
     >
-      <span className="sr-only">{full}</span>
+      {/* Wraps like the heading, instead of one long clipped line. */}
+      <span className="sr-only" style={{ whiteSpace: "normal" }}>
+        {full}
+      </span>
       <span aria-hidden="true">
         {lines.map((line, li) => (
           <span key={line} className="split-line">
