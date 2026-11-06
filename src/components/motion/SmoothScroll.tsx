@@ -3,7 +3,13 @@
 import Lenis from "lenis";
 import { useEffect } from "react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { prefersReducedMotion, scrollToId, setLenis } from "@/lib/scroll";
+import { goTo } from "@/lib/navigate";
+import {
+  prefersReducedMotion,
+  scrollToId,
+  setLenis,
+  targetY,
+} from "@/lib/scroll";
 import { loadedSignal } from "@/lib/signal";
 
 /**
@@ -52,11 +58,9 @@ export default function SmoothScroll() {
       if (!anchor) return;
       const id = anchor.getAttribute("href")?.slice(1) ?? "";
       if (!id) return;
-      if (scrollToId(id)) {
-        event.preventDefault();
-        if (id !== "top") history.replaceState(null, "", `#${id}`);
-        else history.replaceState(null, "", window.location.pathname);
-      }
+      if (targetY(id) === null) return;
+      event.preventDefault();
+      goTo(id, anchor);
     };
     document.addEventListener("click", onClick);
 

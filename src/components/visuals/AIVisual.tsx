@@ -1,150 +1,151 @@
-const INPUTS = [
-  { label: "Web form", y: 70 },
-  { label: "Inbox", y: 210 },
-  { label: "CRM", y: 350 },
-];
-const OUTPUTS = [
-  { label: "Notify team", y: 90 },
-  { label: "Update CRM", y: 210 },
-  { label: "Send invoice", y: 330 },
-];
-const CORE = { x: 320, y: 210 };
+import {
+  Bell,
+  Check,
+  ClipboardList,
+  Database,
+  FileText,
+  Mail,
+  PenLine,
+  Sparkles,
+  Table,
+} from "lucide-react";
 
-const inPath = (y: number) =>
-  `M118 ${y} C 210 ${y}, 220 ${CORE.y}, ${CORE.x - 46} ${CORE.y}`;
-const outPath = (y: number) =>
-  `M${CORE.x + 46} ${CORE.y} C 420 ${CORE.y}, 430 ${y}, 522 ${y}`;
-
-const LOG = [
-  ["lead.received", "web-form"],
-  ["ai.classify", "intent: quote"],
-  ["ai.enrich", "company matched"],
-  ["crm.update", "stage → qualified"],
-  ["notify.team", "#sales"],
+const IN = [
+  { icon: Mail, label: "New email", note: "support@", y: 18 },
+  { icon: ClipboardList, label: "Form lead", note: "website", y: 40 },
+  { icon: FileText, label: "Invoice PDF", note: "accounts@", y: 62 },
 ];
 
-/** Automation & AI — a live workflow: triggers flow through an AI agent into actions. */
+const OUT = [
+  { icon: Database, label: "Update CRM", note: "contact, deal", y: 13 },
+  { icon: PenLine, label: "Draft reply", note: "for review", y: 31 },
+  { icon: Bell, label: "Notify team", note: "#sales", y: 49 },
+  { icon: Table, label: "Post to ledger", note: "matched", y: 67 },
+];
+
+/** Wires run from each card's edge into the agent, on a 1200 by 800 stage. */
+const CORE = { x: 600, y: 320 };
+const wireIn = (y: number) =>
+  `M212 ${y * 8} C 360 ${y * 8} 400 ${CORE.y} ${CORE.x - 70} ${CORE.y}`;
+const wireOut = (y: number) =>
+  `M${CORE.x + 70} ${CORE.y} C 800 ${CORE.y} 830 ${y * 8} 958 ${y * 8}`;
+
+const TRACE = [
+  { text: "Reading invoice INV-2041", tag: "read" },
+  { text: "Extracted 14 fields, 98% confidence", tag: "parse" },
+  { text: "Matched to purchase order PO-8841", tag: "match" },
+  { text: "Total agrees, no human needed", tag: "check" },
+  { text: "Posted to ledger in 3.2s", tag: "done" },
+];
+
+const WEEK = [
+  { value: "1,284", label: "Tasks run" },
+  { value: "46h", label: "Hours saved" },
+  { value: "12", label: "Sent for review" },
+];
+
+/** Automation and AI: a live workflow, the agent's trace and the week's tally. */
 export default function AIVisual() {
+  const wires = [
+    ...IN.map((node) => wireIn(node.y + 5)),
+    ...OUT.map((node) => wireOut(node.y + 5)),
+  ];
   return (
     <div className="vis vis-ai" aria-hidden="true">
-      <div className="vis-layer vis-ai-graph" data-depth="0.8">
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 640 420"
-          className="h-full w-full overflow-visible"
-        >
-          <defs>
-            {INPUTS.map((n, i) => (
-              <path key={n.label} id={`vx-ai-in-${i}`} d={inPath(n.y)} />
-            ))}
-            {OUTPUTS.map((n, i) => (
-              <path key={n.label} id={`vx-ai-out-${i}`} d={outPath(n.y)} />
-            ))}
-          </defs>
+      <div className="ai-dots" />
 
-          <g className="vis-ai-links">
-            {INPUTS.map((n) => (
-              <path key={n.label} d={inPath(n.y)} />
-            ))}
-            {OUTPUTS.map((n) => (
-              <path key={n.label} d={outPath(n.y)} />
-            ))}
-          </g>
-
-          {/* packets */}
-          {INPUTS.map((n, i) => (
-            <circle key={`p-in-${n.label}`} r="4.5" className="vis-packet">
-              <animateMotion
-                dur="2.6s"
-                begin={`${i * 0.7}s`}
-                repeatCount="indefinite"
-              >
-                <mpath href={`#vx-ai-in-${i}`} />
-              </animateMotion>
-            </circle>
-          ))}
-          {OUTPUTS.map((n, i) => (
+      <svg aria-hidden="true" className="ai-wires" viewBox="0 0 1200 800">
+        {wires.map((d, i) => (
+          <g key={d}>
+            <path d={d} />
             <circle
-              key={`p-out-${n.label}`}
-              r="4.5"
-              className="vis-packet vis-packet--alt"
-            >
-              <animateMotion
-                dur="2.2s"
-                begin={`${1.2 + i * 0.6}s`}
-                repeatCount="indefinite"
-              >
-                <mpath href={`#vx-ai-out-${i}`} />
-              </animateMotion>
-            </circle>
-          ))}
-
-          {/* nodes */}
-          {INPUTS.map((n) => (
-            <g
-              key={n.label}
-              transform={`translate(18 ${n.y - 22})`}
-              className="vis-ai-node"
-            >
-              <rect width="100" height="44" rx="8" />
-              <circle cx="20" cy="22" r="5" className="vis-ai-node-dot" />
-              <text x="34" y="26.5" className="vis-ai-text">
-                {n.label}
-              </text>
-            </g>
-          ))}
-          {OUTPUTS.map((n) => (
-            <g
-              key={n.label}
-              transform={`translate(522 ${n.y - 22})`}
-              className="vis-ai-node"
-            >
-              <rect width="112" height="44" rx="8" />
-              <circle
-                cx="20"
-                cy="22"
-                r="5"
-                className="vis-ai-node-dot vis-ai-node-dot--alt"
-              />
-              <text x="34" y="26.5" className="vis-ai-text">
-                {n.label}
-              </text>
-            </g>
-          ))}
-
-          <g
-            transform={`translate(${CORE.x} ${CORE.y})`}
-            className="vis-ai-core"
-          >
-            <circle r="92" className="vis-ai-orbit" />
-            <circle r="70" className="vis-ai-orbit vis-ai-orbit--b" />
-            <circle r="46" className="vis-ai-core-body" />
-            <path
-              d="M0 -24 L21 -12 L21 12 L0 24 L-21 12 L-21 -12 Z"
-              className="vis-ai-hex"
+              r="5"
+              style={
+                {
+                  offsetPath: `path("${d}")`,
+                  "--i": i,
+                } as React.CSSProperties
+              }
+              data-out={i >= IN.length ? "" : undefined}
             />
-            <text y="5" textAnchor="middle" className="vis-ai-core-text">
-              AI
-            </text>
           </g>
-        </svg>
+        ))}
+      </svg>
+
+      {IN.map(({ icon: Icon, label, note, y }) => (
+        <div
+          key={label}
+          className="vis-layer ai-node ai-node--in"
+          data-depth="0.6"
+          style={{ top: `${y}%` }}
+        >
+          <i>
+            <Icon size="1.2em" strokeWidth={2} />
+          </i>
+          <span>
+            {label}
+            <small>{note}</small>
+          </span>
+        </div>
+      ))}
+
+      {OUT.map(({ icon: Icon, label, note, y }) => (
+        <div
+          key={label}
+          className="vis-layer ai-node ai-node--out"
+          data-depth="0.6"
+          style={{ top: `${y}%` }}
+        >
+          <i>
+            <Icon size="1.2em" strokeWidth={2} />
+          </i>
+          <span>
+            {label}
+            <small>{note}</small>
+          </span>
+          <b>
+            <Check size="0.8em" strokeWidth={4} />
+          </b>
+        </div>
+      ))}
+
+      <div className="vis-layer ai-core" data-depth="1.2">
+        <span className="ai-orbit" />
+        <span className="ai-orbit ai-orbit--2" />
+        <span className="ai-heart">
+          <Sparkles size="2.2em" strokeWidth={1.75} />
+        </span>
+        <span className="ai-core-label">
+          Agent
+          <small>Reasoning</small>
+        </span>
       </div>
 
-      <div className="vis-layer vis-ai-log" data-depth="1.6">
-        <div className="vis-console">
-          <div className="vis-console-head caption">
-            <span className="vis-dot pulse-dot" />
-            workflow / inbound-leads
-          </div>
-          <ul>
-            {LOG.map(([event, detail], i) => (
-              <li key={event} style={{ ["--i" as string]: i }}>
-                <span className="caption vis-console-event">→ {event}</span>
-                <span className="caption text-muted">{detail}</span>
-              </li>
-            ))}
-          </ul>
+      <div className="vis-layer ui-win ai-trace" data-depth="1.6">
+        <div className="ui-head">
+          <span>Run #20417</span>
+          <span className="ui-live">Running</span>
         </div>
+        <ol>
+          {TRACE.map((line, i) => (
+            <li key={line.tag} style={{ "--i": i } as React.CSSProperties}>
+              <code>{line.tag}</code>
+              {line.text}
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="vis-layer ui-win ai-week" data-depth="2">
+        <div className="ui-head">
+          <span>This week</span>
+        </div>
+        {WEEK.map((stat) => (
+          <div key={stat.label}>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

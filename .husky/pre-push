@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+set -e
+
+current=$(git rev-parse --abbrev-ref HEAD)
+case "$current" in
+  main|master|dev)
+    echo "You are on '${current}'. Switch to a feature branch before pushing."
+    exit 1
+    ;;
+esac
+
+# stdin lines: <local_ref> <local_sha> <remote_ref> <remote_sha>
+while read -r local_ref local_sha remote_ref remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main|refs/heads/master|refs/heads/dev)
+      branch=${remote_ref#refs/heads/}
+      echo "Direct push to '${branch}' is blocked."
+      echo "Push a feature branch (e.g. feat/my-change), then merge into ${branch}."
+      exit 1
+      ;;
+  esac
+done

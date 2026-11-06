@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+pattern='^(feat|fix|perf|refactor|docs|test|build|ci|chore)(\([a-z0-9_-]+\))?: .+'
+subject=$(head -n1 "$1")
+
+# Git writes these itself when merging into main or dev, or reverting.
+case "$subject" in
+  "Merge "*|"Revert "*) exit 0 ;;
+esac
+
+if ! printf '%s\n' "$subject" | grep -Eq "$pattern"; then
+  echo "Commit message must look like: type(scope): summary"
+  echo "Types: feat fix perf refactor docs test build ci chore"
+  exit 1
+fi

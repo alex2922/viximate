@@ -1,38 +1,50 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Geist_Mono } from "next/font/google";
+import { League_Gothic, Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/motion/Cursor";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import Nav from "@/components/nav/Nav";
 import Footer from "@/components/sections/Footer";
 import SiteLoader from "@/components/siteLoader/SiteLoader";
+import PageTransition from "@/components/transition/PageTransition";
+import RouteTransitions from "@/components/transition/RouteTransitions";
 import { site } from "@/config/site";
 
-const archivo = Archivo({
-  variable: "--font-archivo",
+const display = League_Gothic({
+  variable: "--font-display",
   subsets: ["latin"],
-  axes: ["wdth"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// latin-ext carries the rupee sign the budget options use.
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
+  subsets: ["latin", "latin-ext"],
+  display: "swap",
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
   subsets: ["latin"],
+  weight: ["700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: `${site.name} — ${site.tagline}`,
+  title: {
+    default: `${site.name} | ${site.motto}`,
+    template: `%s | ${site.name}`,
+  },
   description: site.description,
   openGraph: {
-    title: `${site.name} — ${site.tagline}`,
+    title: `${site.name} | ${site.motto}`,
     description: site.description,
     type: "website",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#070809",
+  themeColor: "#000000",
   colorScheme: "dark",
 };
 
@@ -40,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${geistMono.variable} antialiased`}
+      className={`${display.variable} ${montserrat.variable} ${poppins.variable} antialiased`}
     >
       <body>
         <noscript>
@@ -55,6 +67,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Nav />
         {children}
         <Footer />
+        <PageTransition />
+        <RouteTransitions />
       </body>
     </html>
   );

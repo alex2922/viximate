@@ -39,17 +39,30 @@ function resolveY(id: string): number | null {
   return el.getBoundingClientRect().top + window.scrollY;
 }
 
-/** Smoothly scroll to a section id. Returns false if the target does not exist. */
-export function scrollToId(id: string): boolean {
+/** Where a section id sits, or null when there is no such section. */
+export function targetY(id: string): number | null {
   const y = id === "top" ? 0 : resolveY(id);
-  if (y === null) return false;
-  const top = Math.max(0, y);
+  return y === null ? null : Math.max(0, y);
+}
+
+/**
+ * Scroll to a section id, smoothly or (under a transition) at once.
+ * Returns false if the target does not exist.
+ */
+export function scrollToId(id: string, immediate = false): boolean {
+  const top = targetY(id);
+  if (top === null) return false;
   if (lenis) {
-    lenis.scrollTo(top, { duration: 1.6, force: true });
+    lenis.scrollTo(
+      top,
+      immediate
+        ? { immediate: true, force: true }
+        : { duration: 1.6, force: true },
+    );
   } else {
     window.scrollTo({
       top,
-      behavior: prefersReducedMotion() ? "auto" : "smooth",
+      behavior: immediate || prefersReducedMotion() ? "auto" : "smooth",
     });
   }
   const el = id === "top" ? null : document.getElementById(id);

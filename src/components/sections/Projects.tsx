@@ -83,7 +83,7 @@ function Cover({ kind }: { kind: ProjectCover }) {
   );
 }
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
+function ProjectCard({ project }: { project: Project }) {
   const serviceNames = project.services
     .map((id) => services.find((s) => s.id === id)?.short)
     .filter(Boolean);
@@ -94,11 +94,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       </div>
       <div className="mt-5 flex items-start justify-between gap-6">
         <div>
-          <p className="caption text-muted">
-            {String(index + 1).padStart(2, "0")} · {project.client} ·{" "}
-            {project.year}
+          <h3 className="h3">{project.title}</h3>
+          <p className="caption text-muted mt-2">
+            {project.client}, {project.year}
           </p>
-          <h3 className="lead font-semibold mt-2">{project.title}</h3>
         </div>
         {project.href ? (
           <ArrowUpRight
@@ -134,18 +133,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 /**
  * Selected work. Rendered only when SHOW_PROJECTS is enabled in
- * src/config/site.ts — see app/page.tsx.
+ * src/config/site.ts (see app/page.tsx).
  */
-export default function Projects({ index }: { index: string }) {
+export default function Projects() {
   return (
     <section id="work" aria-labelledby="work-title" className="section">
       <div className="shell">
         <SectionHeader
-          index={index}
-          eyebrow="Selected work"
           id="work-title"
           title={["Proof, not", "promises."]}
-          description="A selection of platforms, products and campaigns we've engineered for ambitious teams."
+          description="A selection of platforms, products and campaigns we’ve engineered for ambitious teams."
         />
         <ul className="project-grid mt-16 md:mt-24">
           {projects.map((project, i) => (
@@ -154,7 +151,7 @@ export default function Projects({ index }: { index: string }) {
               data-reveal="up"
               data-reveal-delay={(i % 2) * 0.1}
             >
-              <ProjectCard project={project} index={i} />
+              <ProjectCard project={project} />
             </li>
           ))}
         </ul>

@@ -5,11 +5,13 @@ import SectionHeader from "@/components/ui/SectionHeader";
 import { processSteps } from "@/config/site";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 
+const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
 /**
- * Our approach — a sticky counter and a progress rail that fills as each
+ * Our approach: a sticky counter, rolling like an odometer, and a progress rail that fills as each
  * step crosses the centre of the viewport.
  */
-export default function Process({ index }: { index: string }) {
+export default function Process() {
   const rootRef = useRef<HTMLElement>(null);
   const counterRef = useRef<HTMLSpanElement>(null);
 
@@ -45,7 +47,13 @@ export default function Process({ index }: { index: string }) {
           onToggle: (self) => {
             step.dataset.active = String(self.isActive);
             if (self.isActive && counterRef.current) {
-              counterRef.current.textContent = processSteps[i].index;
+              // Each digit column rolls to its new figure.
+              const digits = processSteps[i].index.padStart(2, "0");
+              counterRef.current
+                .querySelectorAll<HTMLElement>(".odo-col")
+                .forEach((col, d) => {
+                  col.style.transform = `translateY(${-Number(digits[d]) * 10}%)`;
+                });
             }
           },
         }),
@@ -68,55 +76,65 @@ export default function Process({ index }: { index: string }) {
     >
       <div className="shell">
         <SectionHeader
-          index={index}
-          eyebrow="Our approach"
           id="approach-title"
           title={["From signal", "to system."]}
-          description="A clear, collaborative process that de-risks every build — and keeps improving it after launch."
+          description="A clear, collaborative process that de-risks every build and keeps improving it after launch."
         />
 
-        <div className="mt-16 grid gap-10 md:mt-28 md:grid-cols-12 md:gap-6">
-          <div className="hidden md:col-span-4 md:block">
-            <div className="sticky top-[calc(var(--cs-nav-h)+3rem)]">
-              <p className="caption text-muted">Step</p>
-              <p
-                className="h1 wide text-cs-accent leading-none tabular-nums"
-                aria-hidden="true"
-              >
-                <span ref={counterRef}>01</span>
-              </p>
-              <p className="caption text-muted mt-4">
-                of {String(processSteps.length).padStart(2, "0")}
-              </p>
+        <div className="process-layout">
+          <div className="hidden md:block">
+            <div className="process-counter" aria-hidden="true">
+              <span ref={counterRef} className="figure process-counter-num">
+                {[0, 1].map((d) => (
+                  <span key={d} className="odo">
+                    <span
+                      className="odo-col"
+                      style={
+                        d === 1 ? { transform: "translateY(-10%)" } : undefined
+                      }
+                    >
+                      {DIGITS.map((digit) => (
+                        <span key={digit}>{digit}</span>
+                      ))}
+                    </span>
+                  </span>
+                ))}
+              </span>
+              <span className="caption text-muted">
+                Step of {String(processSteps.length).padStart(2, "0")}
+              </span>
             </div>
           </div>
 
-          <ol className="process-steps relative md:col-span-8">
+          <div className="process-steps">
             <span className="process-rail" aria-hidden="true">
               <span className="process-rail-fill" />
             </span>
-            {processSteps.map((step, i) => (
-              <li
-                key={step.index}
-                className="process-step"
-                data-active={i === 0 ? "true" : "false"}
-              >
-                <span className="process-node" aria-hidden="true" />
-                <div className="flex items-baseline gap-5">
-                  <span className="caption text-cs-accent">{step.index}</span>
-                  <h3 className="h3">{step.title}</h3>
-                </div>
-                <p className="lead text-muted mt-6 max-w-[34ch]">{step.text}</p>
-                <ul className="mt-8 flex flex-wrap gap-2">
-                  {step.outputs.map((output) => (
-                    <li key={output} className="chip">
-                      {output}
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ol>
+            <ol>
+              {processSteps.map((step, i) => (
+                <li
+                  key={step.index}
+                  className="process-step"
+                  data-active={i === 0 ? "true" : "false"}
+                >
+                  <span className="process-node" aria-hidden="true" />
+                  <div className="process-step-head">
+                    <h3 className="h3">{step.title}</h3>
+                  </div>
+                  <p className="body text-muted process-step-text">
+                    {step.text}
+                  </p>
+                  <ul className="process-outputs">
+                    {step.outputs.map((output) => (
+                      <li key={output} className="chip">
+                        {output}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </div>
     </section>

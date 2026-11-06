@@ -1,0 +1,1134 @@
+/* Hallmark · see src/app/globals.css for the stamp, critique and waivers of this redesign */
+/* Inner pages: about, services, a service, blog, a post, contact. Every colour references a --cs- token. */
+
+/* ==========================================================================
+   Discipline colours, the same four the hero paints its pieces in
+   ========================================================================== */
+
+[data-discipline="web"] {
+  --disc: var(--cs-disc-web);
+}
+[data-discipline="app"] {
+  --disc: var(--cs-disc-app);
+}
+[data-discipline="ai"] {
+  --disc: var(--cs-disc-ai);
+}
+[data-discipline="growth"] {
+  --disc: var(--cs-disc-growth);
+}
+[data-discipline="system"] {
+  --disc: var(--cs-accent);
+}
+
+.disc-swatch {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 0.15rem;
+  background: var(--disc, var(--cs-accent));
+  box-shadow: inset 0 0 0 1px var(--cs-line-strong);
+  transition: transform var(--cs-dur-short) var(--cs-ease);
+}
+
+/* ==========================================================================
+   Page head
+   ========================================================================== */
+
+.page-head {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: min(100svh, 54rem);
+  padding-top: calc(var(--cs-nav-h) + clamp(2rem, 5vw, 4rem));
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.page-head > .shell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* What follows stays above any block still flying out of the head. */
+.page-head ~ *,
+article:has(> .page-head) ~ * {
+  position: relative;
+  z-index: 1;
+}
+
+/* The hero's blocks, on the whole head, fading out at its foot. */
+.page-blocks {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: calc(100% + 14vh);
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, #000 76%, transparent);
+}
+
+.page-figure {
+  display: grid;
+  gap: 1rem;
+  color: var(--tone, var(--cs-foreground));
+}
+
+.page-figure-frame,
+.contact-figure {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  cursor: pointer;
+}
+
+.page-figure-frame > svg,
+.contact-figure > svg {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+/* Once the scene has it, the flat art steps aside. */
+[data-blocks-ready] [data-blocks-frame] > * {
+  visibility: hidden;
+}
+
+.contact--page {
+  position: relative;
+}
+
+.contact--page > .shell {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-figure {
+  max-width: 24rem;
+  margin-top: 1rem;
+}
+
+.not-found {
+  position: relative;
+}
+
+.not-found-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.not-found-frame {
+  position: absolute;
+  top: 26%;
+  right: 3%;
+  width: min(34%, 30rem);
+  aspect-ratio: 3 / 2;
+}
+
+@media (max-width: 59.99rem) {
+  .not-found-frame {
+    top: auto;
+    right: 10%;
+    bottom: 4%;
+    width: 60%;
+  }
+
+  .not-found-inner {
+    align-content: start;
+    padding-top: calc(var(--cs-nav-h) + 3rem);
+    padding-bottom: 16rem;
+  }
+}
+
+.not-found-inner .h1 {
+  max-width: 13ch;
+}
+
+/* One of the footer's blocks, standing still: a number, a marker, a bullet. */
+.shape {
+  position: relative;
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 3.25rem;
+  aspect-ratio: 1;
+  border-radius: var(--cs-radius);
+  background: var(--disc, var(--cs-accent));
+  color: var(--cs-on-accent);
+  font-family: var(--cs-font-accent);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.shape::after {
+  content: "";
+  position: absolute;
+  inset: 0.1875rem;
+  border: 1.5px dashed currentColor;
+  border-radius: inherit;
+  opacity: 0.55;
+}
+
+.shape[data-shape="round"] {
+  border-radius: 50%;
+}
+
+.step-strip-item .shape,
+.why-cell .shape {
+  justify-self: start;
+  align-self: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.shape--sm {
+  width: 1.5rem;
+  border-radius: 0.3rem;
+}
+
+.shape--sm::after {
+  inset: 0.125rem;
+  border-width: 1px;
+}
+
+/* The footer's shapes, in a small pile on a line. */
+.shape-pit {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-end;
+  align-items: flex-end;
+  gap: 0.5rem;
+  min-height: 15rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--cs-line-strong);
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.about-story-side,
+.faq-side {
+  display: grid;
+  gap: 2rem;
+  align-content: start;
+}
+
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  color: var(--cs-muted);
+  transition: color var(--cs-dur-short) var(--cs-ease);
+}
+
+.page-back:hover,
+.page-back:focus-visible {
+  color: var(--cs-foreground);
+}
+
+.page-back svg {
+  transition: transform var(--cs-dur-short) var(--cs-ease);
+}
+
+.page-back:hover svg,
+.page-back:focus-visible svg {
+  transform: translateX(-3px);
+}
+
+.page-head-grid {
+  display: grid;
+  gap: 3rem;
+}
+
+.page-head-copy {
+  display: grid;
+  gap: 1.5rem;
+  align-content: end;
+}
+
+.page-title {
+  max-width: 20ch;
+}
+
+.page-lead {
+  max-width: 46ch;
+}
+
+.page-meta {
+  padding-top: 0.25rem;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+@media (min-width: 60rem) {
+  .page-head-grid[data-has-aside] {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--cs-col-gap);
+  }
+}
+
+/* "More on how we work", "All posts": a small trailing link. */
+.page-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 2.5rem;
+  color: var(--cs-muted);
+  transition: color var(--cs-dur-short) var(--cs-ease);
+}
+
+.page-more:hover,
+.page-more:focus-visible {
+  color: var(--cs-foreground);
+}
+
+.page-more svg {
+  transition: transform var(--cs-dur-short) var(--cs-ease);
+}
+
+.page-more:hover svg,
+.page-more:focus-visible svg {
+  transform: translate(2px, -2px);
+}
+
+/* ==========================================================================
+   A service page
+   ========================================================================== */
+
+.svc-stage-frame {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  container-type: size;
+  overflow: clip;
+  border: 1px solid var(--cs-line);
+  border-radius: calc(var(--cs-radius) * 2);
+  background:
+    radial-gradient(
+      circle at 85% 0%,
+      color-mix(in oklch, var(--tone) 12%, transparent),
+      transparent 60%
+    ),
+    var(--cs-surface);
+}
+
+@media (min-width: 48rem) {
+  .svc-stage-frame {
+    aspect-ratio: 2 / 1;
+  }
+}
+
+.svc-detail {
+  display: grid;
+  gap: 3.5rem;
+}
+
+.svc-deliver {
+  margin-top: 2rem;
+  border-top: 1px solid var(--cs-line);
+}
+
+.svc-deliver-item {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--cs-line);
+}
+
+.svc-helps {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  min-height: 20rem;
+  padding: clamp(1.75rem, 3vw, 3rem);
+  overflow: hidden;
+  border-radius: calc(var(--cs-radius) * 2);
+  background: var(--disc);
+  color: var(--cs-on-accent);
+}
+
+.svc-helps .caption {
+  font-weight: 600;
+}
+
+.svc-helps .statement {
+  max-width: 24ch;
+  color: inherit;
+}
+
+@media (min-width: 60rem) {
+  .svc-detail {
+    grid-template-columns: var(--cs-span-2) minmax(0, 1fr);
+    column-gap: var(--cs-col-gap);
+  }
+}
+
+.connect-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+@media (min-width: 60rem) {
+  .connect-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--cs-col-gap);
+  }
+}
+
+.connect-card {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  height: 100%;
+  min-height: 15rem;
+  padding: clamp(1.5rem, 2.4vw, 2rem);
+  overflow: hidden;
+  border-radius: calc(var(--cs-radius) * 2);
+  background: var(--disc);
+  color: var(--cs-on-accent);
+}
+
+.connect-card:focus-visible {
+  outline: 2px solid var(--disc);
+  outline-offset: 0.25rem;
+}
+
+.connect-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.connect-head .h3 {
+  flex: 1;
+}
+
+.connect-arrow {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--cs-on-accent);
+  color: var(--disc);
+}
+
+.connect-arrow svg {
+  transition: transform var(--cs-dur-long) var(--cs-ease);
+}
+
+.connect-card:hover .connect-arrow svg,
+.connect-card:focus-visible .connect-arrow svg {
+  transform: rotate(45deg);
+}
+
+/* Steps in a row: process on service pages, what happens next on contact. */
+.step-strip {
+  display: grid;
+  gap: 0 2rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.step-strip-item {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  padding-block: 1.75rem;
+  border-top: 1px solid var(--cs-line);
+}
+
+@media (min-width: 48rem) {
+  .step-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 72rem) {
+  .step-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--cs-col-gap);
+  }
+
+  .step-strip--three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--cs-col-gap);
+  }
+}
+
+/* ==========================================================================
+   Questions
+   ========================================================================== */
+
+.faq-layout {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.faq-layout .section-head {
+  align-self: start;
+}
+
+@media (min-width: 60rem) {
+  .faq-layout {
+    grid-template-columns: var(--cs-span-2) minmax(0, 1fr);
+    column-gap: var(--cs-col-gap);
+  }
+
+  .faq-layout .section-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.faq-list {
+  border-top: 1px solid var(--cs-line);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--cs-line);
+}
+
+.faq-q {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  justify-content: space-between;
+  padding-block: 1.5rem;
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--cs-dur-short) var(--cs-ease);
+}
+
+.faq-q::-webkit-details-marker {
+  display: none;
+}
+
+.faq-q:hover {
+  color: var(--cs-accent);
+}
+
+.faq-q:focus-visible {
+  outline-offset: -2px;
+}
+
+.faq-icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--disc, var(--cs-accent));
+  color: var(--cs-on-accent);
+}
+
+.faq-icon svg {
+  transition: transform var(--cs-dur-long) var(--cs-ease);
+}
+
+.faq-item[open] .faq-icon svg {
+  transform: rotate(45deg);
+}
+
+.faq-a {
+  max-width: 60ch;
+  padding-bottom: 1.75rem;
+}
+
+/* ==========================================================================
+   The close of an inner page
+   ========================================================================== */
+
+.cta-band-inner {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: 2rem;
+  padding: clamp(2rem, 5vw, 4.5rem);
+  overflow: hidden;
+  border-radius: calc(var(--cs-radius) * 2);
+  background: var(--disc, var(--cs-accent));
+  color: var(--cs-on-accent);
+}
+
+.cta-band-inner .h2 {
+  color: inherit;
+}
+
+/* On a neon poster the action turns black, whatever the poster's colour. */
+.cta-band-inner .btn-primary {
+  --btn-bg: var(--cs-on-accent);
+  --btn-fg: var(--cs-foreground);
+  --btn-border: var(--cs-on-accent);
+  --btn-hover-bg: var(--cs-surface-2);
+  --btn-icon-bg: var(--disc, var(--cs-accent));
+  --btn-icon-fg: var(--cs-on-accent);
+  box-shadow: none;
+}
+
+.cta-band-side {
+  display: grid;
+  gap: 1.75rem;
+  justify-items: start;
+  align-content: end;
+}
+
+.cta-band-side .lead {
+  max-width: 36ch;
+}
+
+@media (min-width: 60rem) {
+  .cta-band-inner {
+    grid-template-columns: var(--cs-span-4) minmax(0, 1fr);
+    align-items: end;
+    column-gap: var(--cs-col-gap);
+  }
+}
+
+/* ==========================================================================
+   The services index
+   ========================================================================== */
+
+.svc-index {
+  padding-top: 0;
+}
+
+.svc-index-list {
+  border-top: 1px solid var(--cs-line);
+}
+
+.svc-index-row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 1.25rem 1.5rem;
+  align-items: start;
+  padding-block: clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--cs-line);
+}
+
+.svc-index-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 calc(var(--cs-gutter) * -0.5);
+  z-index: -1;
+  border-radius: var(--cs-radius);
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklch, var(--disc) 10%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--cs-dur-long) var(--cs-ease);
+}
+
+.svc-index-row:hover::before,
+.svc-index-row:focus-visible::before {
+  opacity: 1;
+}
+
+.svc-index-row .block-art {
+  width: 5.5rem;
+  margin: 0.25rem 0 0;
+  color: var(--tone);
+}
+
+[data-assemble][data-on="false"] .block-art rect {
+  opacity: 0.3;
+  transform: translate(var(--dx), var(--dy)) rotate(var(--dr)) scale(0.8);
+}
+
+.svc-index-main {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.svc-index-main .lead {
+  max-width: 44ch;
+}
+
+.svc-index-row .svc-row-arrow {
+  grid-column: -2;
+  grid-row: 1;
+}
+
+.svc-index-deliver {
+  display: grid;
+  grid-column: 2;
+  grid-row: 2;
+  gap: 0.4rem;
+  color: var(--cs-muted);
+}
+
+.svc-index-row .svc-row-arrow svg {
+  transition: transform 0.5s var(--cs-ease);
+}
+
+.svc-index-row:hover .svc-row-arrow svg,
+.svc-index-row:focus-visible .svc-row-arrow svg {
+  transform: rotate(45deg);
+}
+
+@media (min-width: 64rem) {
+  .svc-index-row {
+    grid-template-columns:
+      13rem calc(var(--cs-span-4) - 13rem - var(--cs-col-gap)) minmax(0, 1fr)
+      auto;
+    column-gap: var(--cs-col-gap);
+  }
+
+  .svc-index-deliver {
+    grid-column: 3;
+    grid-row: 1;
+    padding-top: 0.6rem;
+  }
+
+  .svc-index-row .block-art {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   About
+   ========================================================================== */
+
+.about-story-grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.about-story-copy {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 52ch;
+}
+
+@media (min-width: 60rem) {
+  .about-story-grid {
+    grid-template-columns: var(--cs-span-2) minmax(0, 1fr);
+    column-gap: var(--cs-col-gap);
+  }
+}
+
+/* ==========================================================================
+   Blog
+   ========================================================================== */
+
+.blog-index {
+  padding-top: 0;
+}
+
+.blog-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.blog-grid--home,
+.blog-grid--more {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+@media (min-width: 48rem) {
+  .blog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .post-card[data-featured] {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 72rem) {
+  .blog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--cs-col-gap);
+  }
+
+  .blog-grid--more {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Posts are posters: one flat colour per discipline, black type, the
+   stitched edge of the buttons, and loose blocks in the corner. */
+.post-card {
+  --poster: var(--cs-orange);
+  min-width: 0;
+}
+
+.post-card[data-discipline="web"] {
+  --poster: var(--cs-disc-web);
+}
+
+.post-card[data-discipline="app"] {
+  --poster: var(--cs-disc-app);
+}
+
+.post-card[data-discipline="ai"] {
+  --poster: var(--cs-disc-ai);
+}
+
+.post-card[data-discipline="growth"] {
+  --poster: var(--cs-disc-growth);
+}
+
+.post-card-link {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  height: 100%;
+  min-height: 19rem;
+  padding: clamp(1.5rem, 2.4vw, 2.25rem);
+  overflow: hidden;
+  border-radius: calc(var(--cs-radius) * 2);
+  background: var(--poster);
+  color: var(--cs-on-accent);
+}
+
+.post-card-link::after,
+.connect-card::after,
+.cta-band-inner::after,
+.svc-helps::after {
+  content: "";
+  position: absolute;
+  inset: 0.375rem;
+  border: 1.5px dashed currentColor;
+  border-radius: calc(var(--cs-radius) * 2 - 0.375rem);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.post-card-link:focus-visible {
+  outline: 2px solid var(--poster);
+  outline-offset: 0.25rem;
+}
+
+.post-card-filed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-right: 3rem;
+  font-weight: 600;
+}
+
+.post-card .disc-swatch {
+  background: var(--cs-on-accent);
+}
+
+.post-card-title {
+  max-width: 20ch;
+}
+
+.post-card-excerpt {
+  max-width: 44ch;
+}
+
+.post-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  font-weight: 600;
+}
+
+.post-card-arrow {
+  position: absolute;
+  top: clamp(1.1rem, 2vw, 1.75rem);
+  right: clamp(1.1rem, 2vw, 1.75rem);
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--cs-on-accent);
+  color: var(--poster);
+}
+
+.post-card-arrow svg {
+  transition: transform var(--cs-dur-long) var(--cs-ease);
+}
+
+.post-card-link:hover .post-card-arrow svg,
+.post-card-link:focus-visible .post-card-arrow svg {
+  transform: rotate(45deg);
+}
+
+/* The corner blocks, a shade of the poster. They shuffle on hover. */
+.post-card-art {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  bottom: 0;
+  width: min(62%, 22rem);
+  aspect-ratio: 1;
+}
+
+.post-card-art i {
+  position: absolute;
+  background: color-mix(in srgb, var(--cs-on-accent) 13%, transparent);
+  transition: transform 0.7s cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+.post-card-art i:nth-child(1) {
+  right: -14%;
+  bottom: -14%;
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+}
+
+.post-card-art i:nth-child(2) {
+  right: 46%;
+  bottom: 8%;
+  width: 34%;
+  height: 34%;
+  border-radius: 14%;
+  transform: rotate(14deg);
+}
+
+.post-card-art i:nth-child(3) {
+  right: 12%;
+  bottom: 58%;
+  width: 46%;
+  height: 16%;
+  border-radius: 99em;
+  transform: rotate(-22deg);
+}
+
+.post-card[data-discipline="ai"] .post-card-art i:nth-child(1),
+.post-card[data-discipline="growth"] .post-card-art i:nth-child(1) {
+  border-radius: 16%;
+  transform: rotate(-12deg);
+}
+
+.connect-card:hover .post-card-art i:nth-child(1),
+.post-card-link:hover .post-card-art i:nth-child(1),
+.post-card-link:focus-visible .post-card-art i:nth-child(1) {
+  transform: translate(-6%, -6%) rotate(8deg);
+}
+
+.connect-card:hover .post-card-art i:nth-child(2),
+.post-card-link:hover .post-card-art i:nth-child(2),
+.post-card-link:focus-visible .post-card-art i:nth-child(2) {
+  transform: translate(-14%, -10%) rotate(-10deg);
+}
+
+.connect-card:hover .post-card-art i:nth-child(3),
+.post-card-link:hover .post-card-art i:nth-child(3),
+.post-card-link:focus-visible .post-card-art i:nth-child(3) {
+  transform: translate(8%, -16%) rotate(6deg);
+}
+
+@media (min-width: 48rem) {
+  .post-card[data-featured] .post-card-link {
+    min-height: 26rem;
+    padding: clamp(2rem, 3.4vw, 3.25rem);
+  }
+
+  .post-card[data-featured] .post-card-title {
+    font-size: var(--cs-text-h1);
+    line-height: 1;
+    max-width: 16ch;
+  }
+
+  .post-card[data-featured] .post-card-art {
+    width: min(58%, 34rem);
+  }
+}
+
+.journal-more {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-card-art i {
+    transition: none;
+  }
+}
+
+/* A post */
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+}
+
+.post-meta-filed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--cs-foreground);
+}
+
+.prose {
+  max-width: 68ch;
+  padding-bottom: var(--cs-section-s);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--cs-foreground);
+}
+
+.prose > * + * {
+  margin-top: 1.25em;
+}
+
+.prose p,
+.prose li {
+  text-wrap: pretty;
+}
+
+.prose p:first-child {
+  font-size: var(--cs-text-lead);
+  line-height: 1.55;
+}
+
+.prose h2 {
+  margin-top: 2.25em;
+  font-family: var(--cs-font-heading);
+  font-size: var(--cs-text-h3);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: var(--cs-display-track);
+  text-transform: uppercase;
+  -webkit-text-stroke: var(--cs-display-weight) currentColor;
+  text-wrap: balance;
+}
+
+.prose h2::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  border-radius: 0.12em;
+  background: var(--disc, var(--cs-accent));
+  vertical-align: 0.12em;
+}
+
+.prose h2 + * {
+  margin-top: 0.75em;
+}
+
+.prose ul {
+  display: grid;
+  gap: 0.6em;
+  padding-left: 0;
+}
+
+.prose li {
+  position: relative;
+  padding-left: 1.5em;
+  color: var(--cs-muted);
+}
+
+.prose li::before {
+  content: "";
+  position: absolute;
+  left: 0.2em;
+  top: 0.7em;
+  width: 0.4em;
+  height: 0.4em;
+  border-radius: 0.1em;
+  background: var(--disc, var(--cs-accent));
+}
+
+/* ==========================================================================
+   Contact as its own page
+   ========================================================================== */
+
+.contact--page {
+  padding-top: calc(var(--cs-nav-h) + clamp(3rem, 7vw, 5.5rem));
+}
+
+.contact--page .h1 {
+  max-width: 12ch;
+}
+
+.contact-next {
+  padding-top: 0;
+}
+
+/* ==========================================================================
+   Not found
+   ========================================================================== */
+
+.not-found-inner {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: start;
+  min-height: 80svh;
+  align-content: center;
+  padding-top: var(--cs-nav-h);
+}
+
+.not-found-inner .lead {
+  max-width: 40ch;
+}
+
+.not-found-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disc-swatch,
+  .connect-arrow,
+  .faq-icon svg,
+  .post-card-arrow svg,
+  .page-back svg,
+  .page-more svg {
+    transition: none;
+  }
+}
+
+/* The shell an unlisted slug shows for a moment before it resolves. */
+.page-pending {
+  min-height: 100svh;
+}
+
+/* Inner pages: neighbouring sections share one gap instead of two. */
+.page-head ~ .section + .section,
+.page-head ~ section + .section {
+  padding-top: 0;
+}
+
+article + .section {
+  padding-top: var(--cs-section-s);
+}
+
+/* Home: wider than the text above, the latest post leading the next two. */
+@media (min-width: 72rem) {
+  .blog-grid--home {
+    grid-template-columns: var(--cs-span-4) minmax(0, 1fr);
+    column-gap: 1rem;
+    margin-inline: calc(50% - 50vw + var(--cs-gutter));
+  }
+
+  .blog-grid--home .post-card[data-featured] {
+    grid-column: 1;
+    grid-row: span 2;
+  }
+}

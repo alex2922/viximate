@@ -1,53 +1,124 @@
+/* Hallmark · redesign: full · genre: atmospheric · theme: fonts and colours from the owner's brochure (black ground, charcoal panels, orange, yellow, pink, blue, lime; lime dashed pills for buttons) · type: League Gothic display, Montserrat body, Poppins Bold for figures · posture: restrained · nav: edge-aligned, the mark left, one action and a full-screen vermilion menu right · transitions: a yellow sheet with bowed edges that names the destination · hero: Framed stage, pinned; pieces of the logo in four temperatures lie scattered, then dock into one large mark as you scroll · signature: four disciplines assembling into one Viximate mark, with a legend that lights each discipline · footer: a giant letter-rolling close over the mast and the real links · signature: the Viximate mark in light, assembled by the loader and turning in the hero · pages: home, about, services, four service pages, blog, posts, contact; each inner page opens on one h1 and the mark cut into four discipline bands of heat, its own band lit · inner heads: Ledge, the title sits low on its first screen so the service visual or the first card rises into view under it · job: hire, the action in the hero, the header, every page close and the footer */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V3 · weakest: V, the owner kept the showcase and the approach order; varied it with a ribbon threading the About section, a showcase that opens out of an inset card and a letter-rolling close */
+/* Hallmark · dismissed 70 · the contact form opens the visitor's own mail app with the brief filled in; the confirmation says to press send there and names the address, it never claims a send */
+/* Hallmark · dropped onBlur={() => highlight(null)}, onFocus={() => highlight(i)}, onHover={onSceneHover}, onPointerEnter={() => highlight(i)}, onPointerLeave={() => highlight(null)}, onScene={(scene) => { sceneRef.current = scene; }}, onSelect={selectService}, onClick={() => selectService(i)}, mobile-menu, vx-fallback-core · the busy service legend and the clickable network left the hero at the owner's request; the full-screen menu replaces the mobile menu at every size */
+/* Hallmark · waive 79 · Framed stage, the pile fills the frame above the head · the owner asked for smaller type, so the pile carries the hero's height instead of the headline */
+/* Hallmark · waive 44c · Framed stage, the frame takes the screen and the head sits on one row beneath it · the owner asked for smaller type, so the hero copy stays short and the pile fills the screen */
+/* Hallmark · waive 72 · the rolling labels on Start a project, Explore what we do and the legend · each label keeps a second copy clipped just below itself, which rolls up on hover; the measured overflow is that clipped copy, the visible label keeps its padding */
+/* Hallmark · dismissed 29 · the header is a blurred bar over the page, the atmospheric genre's allowed nav backdrop, and only appears once the page scrolls */
+/* Hallmark · dropped #contact, {`#${item.id}`} · the site became pages at the owner's request: contact is its own page at /contact, and the menu and footer link to routes instead of home-page sections */
+/* Hallmark · waive 44a · service pages · a Ledge: the head sits low on purpose so the discipline's interface rises into the first screen beneath it */
+/* Hallmark · waive 78 · /blog · its h2s are post titles inside cards, set at the title size; the lead post's title runs at the section size */
+/* Hallmark · waive 59 · service pages · the stage that holds the discipline's interface is the page head's own picture, so it sits flush under the head with no section gap */
+/* Hallmark · dismissed 77 · a blog post is a document: the article, then keep reading and the close */
+/* Hallmark · dismissed 54 · SplitText and SectionHeader render a real h2 by default; the sections are headed */
+
 @import "tailwindcss";
 @import "../styles/motion.css" layer(components);
 @import "../styles/visuals.css" layer(components);
+@import "../styles/showcase.css" layer(components);
+@import "../styles/pages.css" layer(components);
 
 /* ==========================================================================
-   Viximate design tokens — the single source of truth.
-   Colors, fonts, type scale and radius live here only. Changing a value
-   here restyles the whole site (including the WebGL hero, which reads
-   these variables at runtime).
+   Viximate design tokens: the single source of truth.
+   Every colour, font, size, radius and easing lives here. Changing a value
+   restyles the whole site, the WebGL hero included (it reads these at runtime).
    ========================================================================== */
 
 :root {
   color-scheme: dark;
 
-  /* Color — 60 / 30 / 10 */
-  --cs-background: #070809; /* 60% near-black */
-  --cs-surface: #0e1012;
-  --cs-surface-2: #16191c;
-  --cs-foreground: #f3f4ee; /* 30% type */
-  --cs-muted: #8d929a;
-  --cs-line: rgb(243 244 238 / 0.12);
-  --cs-line-strong: rgb(243 244 238 / 0.24);
-  --cs-accent: #c5ff3a; /* 10% acid green */
-  --cs-accent-2: #b49bff; /* electric lavender */
-  --cs-on-accent: #070809;
-  --cs-on-accent-muted: rgb(7 8 9 / 0.62);
-  --cs-on-accent-line: rgb(7 8 9 / 0.16);
+  /* Colour: the brochure's palette pushed to full neon for screens. Pure black
+     ground, charcoal panels, white type. Lime is the button, orange the menu
+     and highlights, and each discipline has its own colour. All of them hold
+     5:1 or better on the ground, and black type holds on all of them. */
+  --cs-orange: #ff7a00;
+  --cs-yellow: #ffe600;
+  --cs-pink: #ff2e9a;
+  --cs-blue: #1f7aff;
+  --cs-lime: #a4ff00;
 
-  /* Radius — one value for the whole site */
-  --cs-radius: 0.5rem;
+  --cs-background: #000000;
+  --cs-surface: #141414;
+  --cs-surface-2: #2c2c2c;
+  --cs-surface-3: #3e3e3e;
+  --cs-foreground: #fcfcfc;
+  --cs-muted: #bdbdbd;
+  --cs-line: rgb(255 255 255 / 0.1);
+  --cs-line-strong: rgb(255 255 255 / 0.24);
+  --cs-field-edge: #666666;
+  --cs-wordmark: #7c7c7c;
+  --cs-accent: var(--cs-orange);
+  --cs-accent-2: var(--cs-yellow);
+  --cs-on-accent: #000000;
+  --cs-scrim: rgb(0 0 0 / 0.72);
+  --cs-menu-line: rgb(0 0 0 / 0.16);
+  --cs-shadow: rgb(0 0 0 / 0.6);
+  --cs-glow: rgb(164 255 0 / 0.55);
 
-  /* Type families — display/body + mono accent */
-  --cs-font-heading: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --cs-font-body: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --cs-font-accent: var(--font-geist-mono), ui-monospace, monospace;
+  /* The four disciplines: Web yellow, Apps pink, AI blue, Growth lime */
+  --cs-disc-web: var(--cs-yellow);
+  --cs-disc-app: var(--cs-pink);
+  --cs-disc-ai: var(--cs-blue);
+  --cs-disc-growth: var(--cs-lime);
 
-  /* Type scale — 3 heading + 3 body levels, ~1.6 steps */
-  --cs-text-h1: clamp(3.1rem, 0.6rem + 7.8vw, 10.5rem);
-  --cs-text-h2: clamp(2.35rem, 0.9rem + 5.4vw, 7.2rem);
-  --cs-text-h3: clamp(1.6rem, 0.95rem + 2.2vw, 3.6rem);
-  --cs-text-lead: clamp(1.2rem, 0.85rem + 1.2vw, 2.25rem);
-  --cs-text-body: clamp(1rem, 0.96rem + 0.18vw, 1.125rem);
-  --cs-text-caption: 0.75rem;
+  /* The two fixed blooms the atmosphere allows */
+  --cs-bloom-accent: rgb(255 46 154 / 0.2);
+  --cs-bloom-accent-2: rgb(31 122 255 / 0.22);
 
-  /* Layout & motion */
-  --cs-gutter: clamp(1rem, 3.2vw, 3rem);
-  --cs-section: clamp(6rem, 14vw, 13rem);
-  --cs-max: 1680px;
-  --cs-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Radius: one value, inner radii derive from it */
+  --cs-radius: 0.75rem;
+  --cs-radius-pill: 999px;
+
+  /* Families: a condensed display, Montserrat for reading, Poppins Bold for
+     figures. Robson (the brochure's face) is commercial, so League Gothic
+     stands in; --cs-display-weight thickens it to Robson's colour. */
+  --cs-font-heading: var(--font-display), "Arial Narrow", Impact, sans-serif;
+  --cs-font-body: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --cs-font-accent: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --cs-font-code: ui-monospace, "SF Mono", Menlo, monospace;
+  --cs-display-weight: 0.024em;
+  --cs-display-track: 0.016em;
+
+  /* Type scale. The display is condensed, so it runs larger than a normal sans
+     to land at the same visual size: hero 104 / section 66 / title 32 / lead 20
+     / body 16 / small 14 at 1440 */
+  --cs-text-h1: clamp(3.75rem, 2.1rem + 5.2vw, 6.5rem);
+  --cs-text-statement: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
+  --cs-text-h2: clamp(2.875rem, 1.9rem + 3.1vw, 4.125rem);
+  --cs-text-h3: clamp(1.75rem, 1.55rem + 0.6vw, 2rem);
+  --cs-text-lead: clamp(1.0625rem, 0.98rem + 0.3vw, 1.25rem);
+  --cs-text-body: 1rem;
+  --cs-text-caption: 0.875rem;
+
+  /* Layout */
+  --cs-gutter: clamp(1rem, 4.4vw, 4rem);
+  --cs-section: clamp(5rem, 10vw, 9rem);
+  --cs-section-s: clamp(4rem, 8.4vw, 7.5rem);
+  --cs-max: 1440px;
+  /* The grid: three columns. Three tracks with this gap, or a --cs-span
+     track, start on a column. */
+  --cs-cell: clamp(0.75rem, 1.4vw, 1.25rem);
+  --cs-col-gap: calc(var(--cs-cell) * 2);
+  --cs-span-2: calc((100% + var(--cs-col-gap)) / 3 - var(--cs-col-gap));
+  --cs-span-4: calc((100% + var(--cs-col-gap)) * 2 / 3 - var(--cs-col-gap));
   --cs-nav-h: 4.5rem;
+
+  /* Motion */
+  --cs-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --cs-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --cs-ease-in-out: cubic-bezier(0.87, 0, 0.13, 1);
+  --cs-dur-micro: 120ms;
+  --cs-dur-short: 220ms;
+  --cs-dur-long: 420ms;
+
+  /* Layers */
+  --cs-z-raised: 10;
+  --cs-z-menu: 290;
+  --cs-z-nav: 300;
+  --cs-z-loader: 400;
+  --cs-z-transition: 500;
+  --cs-z-cursor: 600;
 }
 
 @theme inline {
@@ -61,8 +132,6 @@
   --color-cs-accent: var(--cs-accent);
   --color-cs-accent-2: var(--cs-accent-2);
   --color-cs-on-accent: var(--cs-on-accent);
-  --color-cs-on-accent-muted: var(--cs-on-accent-muted);
-  --color-cs-on-accent-line: var(--cs-on-accent-line);
   --radius-cs: var(--cs-radius);
   --font-heading: var(--cs-font-heading);
   --font-body: var(--cs-font-body);
@@ -71,13 +140,13 @@
 }
 
 @layer base {
-  /* ==========================================================================
-   Base
-   ========================================================================== */
-
   html {
     background: var(--cs-background);
+    overflow-x: clip;
     -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-color: var(--cs-surface-3) var(--cs-background);
   }
 
   body {
@@ -88,8 +157,8 @@
     font-weight: 400;
     line-height: 1.6;
     overflow-x: clip;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    caret-color: var(--cs-accent);
+    font-synthesis: none;
   }
 
   ::selection {
@@ -100,7 +169,6 @@
   :focus-visible {
     outline: 2px solid var(--cs-accent);
     outline-offset: 3px;
-    border-radius: 2px;
   }
 
   img,
@@ -112,40 +180,53 @@
 
 @layer components {
   /* ==========================================================================
-   Typography — global classes only
-   ========================================================================== */
+     Typography: global classes only
+     ========================================================================== */
 
   .h1,
   .h2,
   .h3 {
     font-family: var(--cs-font-heading);
-    font-weight: 700;
-    font-stretch: 100%;
-    text-wrap: balance;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: var(--cs-display-track);
+    -webkit-text-stroke: var(--cs-display-weight) currentColor;
+    overflow-wrap: break-word;
+    min-width: 0;
   }
 
   .h1 {
     font-size: var(--cs-text-h1);
-    line-height: 0.9;
-    letter-spacing: -0.055em;
+    line-height: 1.04;
+    max-width: 20ch;
   }
 
   .h2 {
     font-size: var(--cs-text-h2);
-    line-height: 0.92;
-    letter-spacing: -0.05em;
+    line-height: 1.06;
+    text-wrap: balance;
+    max-width: 24ch;
   }
 
   .h3 {
     font-size: var(--cs-text-h3);
-    line-height: 1;
-    letter-spacing: -0.035em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  .statement {
+    font-family: var(--cs-font-body);
+    font-size: var(--cs-text-statement);
+    font-weight: 500;
+    line-height: 1.34;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
   }
 
   .lead {
     font-size: var(--cs-text-lead);
-    line-height: 1.3;
-    letter-spacing: -0.02em;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
     font-weight: 400;
     text-wrap: pretty;
   }
@@ -156,30 +237,32 @@
     text-wrap: pretty;
   }
 
+  /* Labels, captions, meta: the body face a step smaller, sentence case */
   .caption {
-    font-family: var(--cs-font-accent);
     font-size: var(--cs-text-caption);
-    line-height: 1.4;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    line-height: 1.45;
     font-weight: 400;
+  }
+
+  /* Figures that count or compare */
+  .figure {
+    font-family: var(--cs-font-accent);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
   }
 
   .text-muted {
     color: var(--cs-muted);
   }
 
-  .wide {
-    font-stretch: 125%;
-  }
-
   /* ==========================================================================
-   Layout
-   ========================================================================== */
+     Layout
+     ========================================================================== */
 
   .shell {
     width: 100%;
-    max-width: var(--cs-max);
+    max-width: calc(var(--cs-max) + var(--cs-gutter) * 2);
     margin-inline: auto;
     padding-inline: var(--cs-gutter);
   }
@@ -187,6 +270,11 @@
   .section {
     position: relative;
     padding-block: var(--cs-section);
+  }
+
+  /* Sections open on a full-width rule. */
+  main > .section {
+    border-top: 1px solid var(--cs-line);
   }
 
   .hairline {
@@ -198,80 +286,68 @@
   }
 
   /* ==========================================================================
-   Components
-   ========================================================================== */
-
-  /* Eyebrow / chip — one recipe for every section */
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: var(--cs-font-accent);
-    font-size: var(--cs-text-caption);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--cs-muted);
-  }
-
-  .eyebrow::before {
-    content: "";
-    width: 0.45rem;
-    height: 0.45rem;
-    border-radius: 50%;
-    background: var(--cs-accent);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--cs-accent) 14%, transparent);
-  }
-
-  .on-accent .eyebrow {
-    color: var(--cs-on-accent-muted);
-  }
-
-  .on-accent .eyebrow::before {
-    background: var(--cs-on-accent);
-    box-shadow: none;
-  }
+     Components
+     ========================================================================== */
 
   .chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.7rem;
+    padding: 0.375rem 0.75rem;
     border: 1px solid var(--cs-line-strong);
-    border-radius: var(--cs-radius);
-    font-family: var(--cs-font-accent);
+    border-radius: 999px;
     font-size: var(--cs-text-caption);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    line-height: 1;
+    line-height: 1.2;
     white-space: nowrap;
+    color: var(--cs-muted);
   }
 
-  /* Buttons — two variants */
+  /* Buttons: the brochure's pill, a dashed line stitched just inside the edge.
+     One filled lime primary, one outlined secondary. The icon chip is fixed
+     on the right; only the arrow inside it turns. */
   .btn {
     --btn-bg: transparent;
     --btn-fg: var(--cs-foreground);
     --btn-border: var(--cs-line-strong);
+    --btn-hover-bg: var(--cs-foreground);
+    --btn-hover-fg: var(--cs-background);
+    --btn-icon-bg: var(--cs-surface-2);
+    --btn-icon-fg: var(--cs-foreground);
+    --btn-stitch: 0.5;
+    --btn-h: 3.5rem;
+    --btn-pad: 0.5625rem;
     position: relative;
     isolation: isolate;
     display: inline-flex;
     align-items: center;
-    gap: 0.75rem;
-    height: 3.5rem;
-    padding-inline: 1.4rem 0.5rem;
+    gap: 0.875rem;
+    height: var(--btn-h);
+    padding-inline: 1.625rem var(--btn-pad);
     border: 1px solid var(--btn-border);
-    border-radius: var(--cs-radius);
+    border-radius: var(--cs-radius-pill);
     background: var(--btn-bg);
     color: var(--btn-fg);
     font-family: var(--cs-font-body);
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
     white-space: nowrap;
     overflow: hidden;
     cursor: pointer;
     transition:
-      color 0.5s var(--cs-ease),
-      border-color 0.5s var(--cs-ease);
+      color var(--cs-dur-long) var(--cs-ease),
+      border-color var(--cs-dur-long) var(--cs-ease),
+      transform var(--cs-dur-micro) var(--cs-ease);
+  }
+
+  /* The stitching */
+  .btn::after {
+    content: "";
+    position: absolute;
+    inset: 0.1875rem;
+    border: 1.5px dashed currentColor;
+    border-radius: inherit;
+    opacity: var(--btn-stitch);
+    pointer-events: none;
   }
 
   .btn::before {
@@ -279,9 +355,9 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background: var(--btn-hover-bg, var(--cs-foreground));
+    background: var(--btn-hover-bg);
     transform: translateY(101%);
-    transition: transform 0.6s var(--cs-ease);
+    transition: transform 0.5s var(--cs-ease);
   }
 
   .btn:hover::before,
@@ -291,121 +367,125 @@
 
   .btn:hover,
   .btn:focus-visible {
-    color: var(--btn-hover-fg, var(--cs-on-accent));
+    color: var(--btn-hover-fg);
+    border-color: var(--btn-hover-bg);
+  }
+
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 
   .btn-icon {
     display: grid;
+    flex-shrink: 0;
     place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: calc(var(--cs-radius) * 0.75);
-    background: var(--btn-icon-bg, var(--cs-surface-2));
-    transition: transform 0.6s var(--cs-ease);
+    width: calc(var(--btn-h) - var(--btn-pad) * 2 - 2px);
+    height: calc(var(--btn-h) - var(--btn-pad) * 2 - 2px);
+    border-radius: var(--cs-radius-pill);
+    background: var(--btn-icon-bg);
+    color: var(--btn-icon-fg);
   }
 
-  .btn:hover .btn-icon {
-    transform: rotate(-45deg);
+  .btn-icon svg {
+    transition: transform 0.5s var(--cs-ease);
+  }
+
+  .btn:hover .btn-icon svg,
+  .btn:focus-visible .btn-icon svg {
+    transform: rotate(45deg);
+  }
+
+  .btn-icon--down svg {
+    transform: rotate(0deg);
+  }
+
+  .btn:hover .btn-icon--down svg,
+  .btn:focus-visible .btn-icon--down svg {
+    transform: translateY(2px);
   }
 
   .btn-primary {
-    --btn-bg: var(--cs-accent);
+    --btn-bg: var(--cs-lime);
     --btn-fg: var(--cs-on-accent);
-    --btn-border: var(--cs-accent);
-    --btn-hover-bg: var(--cs-foreground);
+    --btn-border: var(--cs-lime);
+    --btn-hover-bg: var(--cs-yellow);
     --btn-icon-bg: var(--cs-on-accent);
-    --btn-icon-fg: var(--cs-accent);
+    --btn-icon-fg: var(--cs-lime);
+    --btn-stitch: 1;
+    /* A soft lime glow the button carries at rest */
+    box-shadow: 0 0 1.75rem -0.375rem var(--cs-glow);
   }
 
-  .btn-primary .btn-icon {
-    color: var(--cs-accent);
+  .btn-sm {
+    --btn-h: 3rem;
+    --btn-pad: 0.5rem;
+    gap: 0.75rem;
+    padding-inline-start: 1.25rem;
+    font-size: 0.875rem;
   }
 
-  .btn-ghost {
-    --btn-hover-bg: var(--cs-foreground);
-  }
-
-  .on-accent .btn-primary {
-    --btn-bg: var(--cs-on-accent);
-    --btn-fg: var(--cs-accent);
-    --btn-border: var(--cs-on-accent);
-    --btn-icon-bg: var(--cs-accent);
-  }
-
-  .on-accent .btn-primary .btn-icon {
-    color: var(--cs-on-accent);
-  }
-
-  /* Animated underline link */
+  /* Underline link: the colour of the underline is what moves */
   .link-line {
-    position: relative;
-    display: inline-block;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: transparent;
+    transition:
+      text-decoration-color var(--cs-dur-short) var(--cs-ease),
+      color var(--cs-dur-short) var(--cs-ease);
   }
 
-  .link-line::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -0.1em;
-    height: 1px;
-    background: currentColor;
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 0.6s var(--cs-ease);
+  .link-line:hover,
+  .link-line:focus-visible {
+    text-decoration-color: currentColor;
   }
 
-  .link-line:hover::after,
-  .link-line:focus-visible::after {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-
-  /* Inverted (acid green) surface */
-  .on-accent {
-    background: var(--cs-accent);
-    color: var(--cs-on-accent);
-  }
-
-  .on-accent .text-muted {
-    color: var(--cs-on-accent-muted);
-  }
-
-  .on-accent .hairline {
-    border-color: var(--cs-on-accent-line);
-  }
-
-  /* Form fields */
+  /* Form fields: an inset well, constant border, outline focus */
   .field {
     width: 100%;
-    padding: 1.1rem 0 0.9rem;
-    border: 0;
-    border-bottom: 1px solid var(--cs-line-strong);
-    background: transparent;
+    min-height: 3.25rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--cs-field-edge);
+    border-radius: var(--cs-radius);
+    background: var(--cs-surface);
     color: var(--cs-foreground);
-    font-size: var(--cs-text-lead);
-    letter-spacing: -0.02em;
-    transition: border-color 0.4s var(--cs-ease);
+    font-size: 1rem;
+    line-height: 1.4;
+    transition: border-color var(--cs-dur-short) var(--cs-ease);
   }
 
   .field::placeholder {
     color: var(--cs-muted);
-    opacity: 0.6;
   }
 
-  .field:focus {
-    outline: none;
-    border-color: var(--cs-accent);
+  .field:hover {
+    border-color: var(--cs-muted);
+  }
+
+  .field:focus-visible {
+    outline: 2px solid var(--cs-accent);
+    outline-offset: -1px;
   }
 
   .field:user-invalid {
     border-color: var(--cs-accent-2);
   }
 
+  .field:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
   textarea.field {
     resize: vertical;
-    min-height: 7rem;
-    font-size: var(--cs-text-body);
+    min-height: 8rem;
     line-height: 1.6;
   }
 
@@ -423,18 +503,22 @@
   }
 
   .toggle span {
-    padding: 0.75rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
     border: 1px solid var(--cs-line-strong);
-    border-radius: var(--cs-radius);
-    font-size: 0.95rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    white-space: nowrap;
     transition:
-      background 0.35s var(--cs-ease),
-      color 0.35s var(--cs-ease),
-      border-color 0.35s var(--cs-ease);
+      background-color var(--cs-dur-short) var(--cs-ease),
+      color var(--cs-dur-short) var(--cs-ease),
+      border-color var(--cs-dur-short) var(--cs-ease);
   }
 
   .toggle:hover span {
-    border-color: var(--cs-foreground);
+    border-color: var(--cs-muted);
   }
 
   .toggle input:checked + span {
@@ -443,22 +527,25 @@
     color: var(--cs-on-accent);
   }
 
+  .toggle input:active + span {
+    background: var(--cs-surface-2);
+  }
+
   .toggle input:focus-visible + span {
     outline: 2px solid var(--cs-accent);
     outline-offset: 2px;
   }
 
-  /* Accessibility helpers */
   .skip-link {
     position: fixed;
     top: 1rem;
     left: 1rem;
-    z-index: 200;
+    z-index: var(--cs-z-cursor);
     padding: 0.75rem 1rem;
     border-radius: var(--cs-radius);
     background: var(--cs-accent);
     color: var(--cs-on-accent);
-    font-weight: 600;
+    font-weight: 500;
     transform: translateY(-200%);
   }
 

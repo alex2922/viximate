@@ -1,0 +1,12 @@
+.git
+.gitignore
+.next
+.husky
+.hallmark
+node_modules
+.env*
+*.tsbuildinfo
+*.md
+Dockerfile
+.dockerignore
+Jenkinsfile
